@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Shift Tracker">
+<meta name="theme-color" content="#f1f5f9" id="theme-meta">
+<title>Shift Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f1f5f9; --bg2: #ffffff; --bg3: #e2e8f0; --bg4: #f8fafc;
+    --text: #1e293b; --text2: #475569; --text3: #94a3b8;
+    --border: #cbd5e1; --border2: #e2e8f0;
+    --shadow: rgba(0,0,0,0.07);
+  }
+  .dark {
+    --bg: #0f172a; --bg2: #1e293b; --bg3: #334155; --bg4: #1e293b;
+    --text: #f1f5f9; --text2: #94a3b8; --text3: #475569;
+    --border: #334155; --border2: #1e293b;
+    --shadow: rgba(0,0,0,0.3);
+  }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; min-height: 100dvh;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── Splash ── */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: #0f172a;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  #splash.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
+
+  .splash-icon {
+    width: 90px; height: 90px; border-radius: 24px;
+    background: linear-gradient(135deg, #dc2626, #2563eb);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 20px 60px rgba(220,38,38,0.4);
+    animation: splashPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+    animation-delay: 0.2s;
+    opacity: 0;
+  }
+  .splash-title {
+    font-size: 26px; font-weight: 700; color: #f1f5f9;
+    letter-spacing: -0.03em; margin-top: 20px;
+    animation: splashFade 0.5s ease both;
+    animation-delay: 0.5s; opacity: 0;
+  }
+  .splash-sub {
+    font-family: ui-monospace, monospace;
+    font-size: 11px; color: #475569;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-top: 8px;
+    animation: splashFade 0.5s ease both;
+    animation-delay: 0.7s; opacity: 0;
+  }
+  .splash-dots {
+    display: flex; gap: 6px; margin-top: 48px;
+    animation: splashFade 0.5s ease both;
+    animation-delay: 0.9s; opacity: 0;
+  }
+  .splash-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: #334155;
+    animation: dotPulse 1.2s ease-in-out infinite;
+  }
+  .splash-dot:nth-child(2) { animation-delay: 0.2s; }
+  .splash-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes splashPop { from { opacity:0; transform:scale(0.6) } to { opacity:1; transform:scale(1) } }
+  @keyframes splashFade { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+  @keyframes dotPulse { 0%,100%{background:#334155;transform:scale(1)} 50%{background:#dc2626;transform:scale(1.3)} }
+
+  /* ── App wrapper ── */
+  #app-wrap {
+    max-width: 800px; margin: 0 auto;
+    padding: max(env(safe-area-inset-top),16px) 12px max(env(safe-area-inset-bottom),40px);
+    opacity: 0; transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  #app-wrap.visible { opacity: 1; transform: none; }
+
+  /* ── Page transitions ── */
+  .page { animation: pageIn 0.28s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+  @keyframes pageIn { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:none } }
+
+  /* ── Components ── */
+  .mono { font-family: ui-monospace, 'Courier New', monospace; }
+  .pill { transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1); cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .pill:active { transform: scale(0.9); }
+  .nav-btn { background: var(--bg2); border: 1px solid var(--border); color: var(--text2); border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 20px; line-height: 1; font-family: inherit; transition: all 0.15s; }
+  .nav-btn:active { background: var(--bg3); transform: scale(0.95); }
+  .tab { cursor: pointer; padding: 7px 12px; border-radius: 7px; font-size: 12px; font-weight: 600; transition: all 0.2s; white-space: nowrap; border: none; background: none; font-family: inherit; color: var(--text2); }
+  .tab.active { background: var(--bg2); color: var(--text); box-shadow: 0 1px 3px var(--shadow); }
+  .tab:active { transform: scale(0.95); }
+  input[type="date"], input[type="text"], textarea { font-family: inherit; font-size: 14px; border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; width: 100%; background: var(--bg2); color: var(--text); outline: none; transition: border-color 0.2s; }
+  input:focus, textarea:focus { border-color: var(--text2); box-shadow: 0 0 0 3px var(--border); }
+  .card { background: var(--bg2); border-radius: 14px; padding: 14px; box-shadow: 0 1px 4px var(--shadow); margin-bottom: 12px; border: 1px solid var(--border2); transition: background 0.3s, border-color 0.3s; }
+  .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
+  .icon-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 11px; cursor: pointer; font-size: 16px; line-height: 1; color: var(--text2); font-family: inherit; transition: all 0.15s; }
+  .icon-btn:active { background: var(--bg3); transform: scale(0.92); }
+  .delete-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; padding: 0 4px; transition: transform 0.15s; }
+  .delete-btn:active { transform: scale(0.85); }
+  .today-btn { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 5px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text2); font-family: inherit; transition: all 0.15s; }
+  .today-btn:active { background: var(--bg3); }
+  .stat-box { background: var(--bg4); border: 1px solid var(--border2); border-radius: 10px; padding: 12px; text-align: center; }
+  .action-btn { width: 100%; padding: 12px; border-radius: 10px; background: var(--text); color: var(--bg); border: none; font-weight: 600; font-size: 14px; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+  .action-btn:active { transform: scale(0.98); opacity: 0.85; }
+  .share-btn { background: #0f172a; color: #fff; border: none; border-radius: 10px; padding: 12px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 8px; transition: all 0.2s; }
+  .dark .share-btn { background: #f1f5f9; color: #0f172a; }
+  .share-btn:active { transform: scale(0.98); }
+
+  /* iOS banner */
+  .ios-banner { background: var(--bg2); border: 1px solid #f87171; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; animation: pageIn 0.4s ease both; }
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-icon">🔄</div>
+  <div class="splash-title">Shift Tracker</div>
+  <div class="splash-sub">A · B · C · D · E</div>
+  <div class="splash-dots">
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app-wrap">
+  <div id="app"></div>
+</div>
+
+<script>
+// ── Cycle ─────────────────────────────────────────────────────────────────────
+function buildCycle() {
+  const c = [];
+  for (let b = 0; b < 6; b++) c.push("D","D","N","N","O","O","O","O");
+  c.push("D","D","N","N","X","X","X","X");
+  for (let i = 0; i < 14; i++) c.push("X");
+  return c;
+}
+const CYCLE = buildCycle();
+
+function addDays(d,n){ const r=new Date(d); r.setDate(r.getDate()+n); return r; }
+function diff(a,b){ return Math.round((b-a)/86400000); }
+function fmt(d){ return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
+function fmtFull(d){ return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}); }
+function fmtDate(d){ return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); }
+function toDateKey(d){ return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+
+const _n = new Date();
+const TODAY = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate());
+
+const SHIFTS = [
+  { id:"A", color:"#2563eb", start: new Date(2025,11,8)  },
+  { id:"B", color:"#059669", start: new Date(2025,10,24) },
+  { id:"C", color:"#9333ea", start: new Date(2025,10,10) },
+  { id:"D", color:"#d97706", start: new Date(2025, 9,27) },
+  { id:"E", color:"#dc2626", start: new Date(2025,11,22) },
+];
+
+function cycleDay(shift,date){ return ((diff(shift.start,date)%70)+70)%70; }
+function baseStatus(shift,date){ return CYCLE[cycleDay(shift,date)]; }
+function status(shift,date){
+  const key=toDateKey(date);
+  const notes=getNotes();
+  // swaps stored in notes under __swaps key
+  const swaps=getSwaps();
+  if(swaps[shift.id]&&swaps[shift.id][key]) return swaps[shift.id][key];
+  return baseStatus(shift,date);
+}
+
+function meta(s){
+  if(s==="D") return {label:"Day Shift",  short:"DAY",  emoji:"☀️", bg:"#fef9c3",fg:"#854d0e",br:"#fde047"};
+  if(s==="N") return {label:"Night Shift",short:"NIGHT",emoji:"🌙", bg:"#e0e7ff",fg:"#3730a3",br:"#a5b4fc"};
+  if(s==="O") return {label:"Days Off",   short:"OFF",  emoji:"🛋️",bg:"#dcfce7",fg:"#166534",br:"#86efac"};
+  if(s==="X") return {label:"Long Break", short:"BREAK",emoji:"✈️", bg:"#fce7f3",fg:"#9d174d",br:"#f9a8d4"};
+  return {label:"—",short:"—",emoji:"",bg:"#f1f5f9",fg:"#64748b",br:"#cbd5e1"};
+}
+
+function blockInfo(shift,date){
+  const d=cycleDay(shift,date);
+  if(d>=52) return `Break · day ${d-51} of 18`;
+  const block=Math.floor(d/8)+1,pos=d%8;
+  if(pos<2) return `Block ${block} · Day ${pos+1} of 2`;
+  if(pos<4) return `Block ${block} · Night ${pos-1} of 2`;
+  return `Block ${block} · Rest day ${pos-3} of 4`;
+}
+
+function nextChange(shift,date){
+  const d=cycleDay(shift,date),cur=CYCLE[d];
+  let i=1; while(i<70&&CYCLE[(d+i)%70]===cur)i++;
+  return {days:i,date:addDays(date,i),status:CYCLE[(d+i)%70]};
+}
+
+function nextBreak(shift){
+  let i=0;
+  while(i<140){ const st=CYCLE[cycleDay(shift,addDays(TODAY,i))]; if(st==="X")break; i++; }
+  return i;
+}
+
+function calDays(year,month){
+  const first=new Date(year,month,1),last=new Date(year,month+1,0);
+  const pad=first.getDay()===0?6:first.getDay()-1;
+  const out=Array(pad).fill(null);
+  for(let d=1;d<=last.getDate();d++) out.push(new Date(year,month,d));
+  const trail=(Math.ceil(out.length/7)*7)-out.length;
+  for(let i=0;i<trail;i++) out.push(null);
+  return out;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function getSwaps(){ try{return JSON.parse(localStorage.getItem("swaps")||"{}");}catch{return{};} }
+function saveSwaps(s){ localStorage.setItem("swaps",JSON.stringify(s)); }
+
+function getNotes(){ try{return JSON.parse(localStorage.getItem("notes")||"{}");}catch{return{};} }
+function saveNote(shiftId,dateKey,note){
+  const n=getNotes(); if(!n[shiftId])n[shiftId]={};
+  if(note.trim()) n[shiftId][dateKey]=note.trim();
+  else if(n[shiftId]) delete n[shiftId][dateKey];
+  localStorage.setItem("notes",JSON.stringify(n));
+}
+function getNote(shiftId,dateKey){ const n=getNotes(); return(n[shiftId]&&n[shiftId][dateKey])||""; }
+function getAllNotes(){
+  const n=getNotes(),list=[];
+  for(const[shiftId,days] of Object.entries(n))
+    for(const[key,note] of Object.entries(days)){
+      const[y,m,d]=key.split("-").map(Number);
+      list.push({shiftId,date:new Date(y,m,d),note,key});
+    }
+  return list.sort((a,b)=>a.date-b.date);
+}
+
+function getDark(){ return localStorage.getItem("dark")==="1"; }
+function setDark(v){ localStorage.setItem("dark",v?"1":"0"); }
+
+function getYearStats(shift,year){
+  const start=new Date(year,0,1),end=new Date(year,11,31);
+  let D=0,N=0,O=0,X=0;
+  for(let d=new Date(start);d<=end;d=addDays(d,1)){
+    const s=baseStatus(shift,d);
+    if(s==="D")D++;else if(s==="N")N++;else if(s==="O")O++;else if(s==="X")X++;
+  }
+  return{D,N,O,X};
+}
+
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const TABS=["Today","Calendar","Summary","Search","Who's On","Stats","Notes"];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let S={
+  year:TODAY.getFullYear(), month:TODAY.getMonth(),
+  focus:"E", tab:"Today", banner:true,
+  searchDate:"",
+  noteShift:"E", noteDate:"", noteText:"",
+  dark:getDark(),
+};
+const set=patch=>{S={...S,...patch};draw();};
+
+// ── DOM ───────────────────────────────────────────────────────────────────────
+function h(tag,props,...kids){
+  const e=document.createElement(tag);
+  for(const[k,v] of Object.entries(props||{})){
+    if(k==="style"&&typeof v==="object") Object.assign(e.style,v);
+    else if(k==="class") e.className=v;
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(),v);
+    else e.setAttribute(k,v);
+  }
+  for(const k of kids.flat(9)){
+    if(k==null) continue;
+    e.appendChild(typeof k==="string"?document.createTextNode(k):k);
+  }
+  return e;
+}
+
+function mkBadge(m,id,color,isFocus){
+  return h("div",{style:{display:"flex",alignItems:"center",gap:"2px",padding:"1px 3px",borderRadius:"3px",background:m.bg,border:`1px solid ${isFocus?color:m.br+"66"}`,boxShadow:isFocus?`0 0 5px ${color}44`:"none",transition:"all 0.2s"}},
+    h("span",{class:"mono",style:{fontSize:"8px",fontWeight:"700",color,lineHeight:"1",minWidth:"7px"}},id),
+    h("span",{class:"mono",style:{fontSize:"8px",color:m.fg,lineHeight:"1"}},m.short)
+  );
+}
+
+// ── Pages ─────────────────────────────────────────────────────────────────────
+function renderToday(active){
+  const tSt=status(active,TODAY),tM=meta(tSt);
+  const nx=nextChange(active,TODAY),nxM=meta(nx.status);
+  const nb=nextBreak(active);
+  const wrap=h("div",{class:"page"});
+
+  // Hero widget
+  const hero=h("div",{class:"card",style:{background:`linear-gradient(135deg,${active.color}20,${active.color}06)`,border:`2px solid ${active.color}33`,textAlign:"center",padding:"28px 20px",marginBottom:"12px",position:"relative",overflow:"hidden"}});
+  // decorative circle
+  hero.appendChild(h("div",{style:{position:"absolute",top:"-30px",right:"-30px",width:"120px",height:"120px",borderRadius:"50%",background:`${active.color}10`,pointerEvents:"none"}}));
+  hero.appendChild(h("div",{style:{fontSize:"52px",marginBottom:"10px",lineHeight:"1",animation:"splashPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both",animationDelay:"0.05s"}},tM.emoji));
+  hero.appendChild(h("div",{style:{fontSize:"24px",fontWeight:"700",color:"var(--text)",letterSpacing:"-0.02em",marginBottom:"4px"}},tM.label));
+  hero.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginBottom:"18px"}},blockInfo(active,TODAY)));
+  hero.appendChild(h("div",{style:{display:"inline-flex",alignItems:"center",gap:"10px",padding:"10px 18px",borderRadius:"12px",background:"var(--bg2)",border:"1px solid var(--border)",boxShadow:"0 2px 8px var(--shadow)"}},
+    h("span",{style:{fontSize:"16px"}},nxM.emoji),
+    h("div",{style:{textAlign:"left"}},
+      h("div",{style:{fontSize:"12px",fontWeight:"600",color:"var(--text)"}},nxM.label),
+      h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)"}},`${fmtFull(nx.date)} · in ${nx.days}d`)
+    )
+  ));
+  wrap.appendChild(hero);
+
+  // Break countdown
+  const bc=h("div",{class:"card",style:{display:"flex",alignItems:"center",gap:"14px"}});
+  bc.appendChild(h("div",{style:{fontSize:"28px",lineHeight:"1"}},nb===0?"🏖️":"✈️"));
+  bc.appendChild(h("div",{},
+    nb===0
+      ? [h("div",{style:{fontWeight:"700",fontSize:"15px",color:"#9d174d"}},"On Long Break!"),
+         h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginTop:"2px"}},"Enjoy the time off")]
+      : [h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}},`Break in ${nb} day${nb!==1?"s":""}`),
+         h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginTop:"2px"}},`Starts ${fmtFull(addDays(TODAY,nb))}`)]
+  ));
+  wrap.appendChild(bc);
+
+  // All shifts
+  const allCard=h("div",{class:"card"});
+  allCard.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"10px"}},"All Shifts Today"));
+  SHIFTS.forEach((sh,i)=>{
+    const st=status(sh,TODAY),m=meta(st);
+    const row=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"8px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none",animation:`pageIn 0.3s ease both`,animationDelay:`${0.05*i}s`}});
+    row.appendChild(h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id));
+    row.appendChild(h("div",{style:{flex:"1"}},
+      h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m.label),
+      h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},blockInfo(sh,TODAY))
+    ));
+    row.appendChild(h("span",{style:{fontSize:"20px"}},m.emoji));
+    allCard.appendChild(row);
+  });
+  wrap.appendChild(allCard);
+  return wrap;
+}
+
+function renderCountdownStrip(active){
+  const tSt=status(active,TODAY),tM=meta(tSt);
+  const nx=nextChange(active,TODAY),nxM=meta(nx.status);
+  const nb=nextBreak(active);
+  return h("div",{class:"card",style:{border:`1px solid ${active.color}44`,boxShadow:`0 2px 10px ${active.color}12`,padding:"12px 14px",marginBottom:"12px"}},
+    h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
+      h("div",{style:{flex:"1",minWidth:"120px"}},
+        h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},`${active.id} Shift · ${fmt(TODAY)}`),
+        h("div",{style:{fontSize:"18px",fontWeight:"700",color:"var(--text)"}},`${tM.emoji} ${tM.label}`),
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},blockInfo(active,TODAY))
+      ),
+      h("div",{style:{textAlign:"right",minWidth:"110px"}},
+        h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"3px"}},"Next change"),
+        h("div",{style:{fontSize:"14px",fontWeight:"600",color:active.color}},`${nxM.emoji} ${nxM.label}`),
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text2)",marginTop:"2px"}},`${fmtFull(nx.date)} · ${nx.days}d`)
+      )
+    ),
+    nb>0
+      ?h("div",{style:{marginTop:"8px",paddingTop:"8px",borderTop:"1px solid var(--border2)",display:"flex",alignItems:"center",gap:"6px"}},
+          h("span",{style:{fontSize:"13px"}},"✈️"),
+          h("span",{style:{fontSize:"12px",color:"var(--text2)"}},`Next break in `,h("strong",{},`${nb}d`),` · ${fmtFull(addDays(TODAY,nb))}`)
+        )
+      :h("div",{style:{marginTop:"8px",paddingTop:"8px",borderTop:"1px solid var(--border2)"}},
+          h("span",{style:{fontSize:"12px",color:"#9d174d",fontWeight:"600"}},"✈️ Currently on long break!")
+        )
+  );
+}
+
+function renderCalendar(){
+  const{year,month,focus}=S;
+  const active=SHIFTS.find(s=>s.id===focus);
+  const days=calDays(year,month);
+  const isNow=year===TODAY.getFullYear()&&month===TODAY.getMonth();
+  const wrap=h("div",{class:"page"});
+  const cal=h("div",{class:"card",style:{padding:"12px 10px"}});
+
+  cal.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px"}},
+    h("button",{class:"nav-btn",onClick:()=>month===0?set({year:year-1,month:11}):set({month:month-1})},"‹"),
+    h("div",{style:{display:"flex",alignItems:"center",gap:"8px"}},
+      h("span",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}},`${MONTHS[month]} ${year}`),
+      !isNow?h("button",{class:"today-btn",onClick:()=>set({year:TODAY.getFullYear(),month:TODAY.getMonth()})},"Today"):null
+    ),
+    h("button",{class:"nav-btn",onClick:()=>month===11?set({year:year+1,month:0}):set({month:month+1})},"›")
+  ));
+
+  const hdr=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px",marginBottom:"5px"}});
+  for(const d of ["Mo","Tu","We","Th","Fr","Sa","Su"])
+    hdr.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"9px",color:"var(--text3)",padding:"2px 0"}},d));
+  cal.appendChild(hdr);
+
+  const grid=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px"}});
+  days.forEach((date,idx)=>{
+    if(!date){grid.appendChild(h("div",{}));return;}
+    const isToday=diff(TODAY,date)===0;
+    const fSt=status(active,date),fM=meta(fSt);
+    const hasNote=getNotes()[active.id]&&getNotes()[active.id][toDateKey(date)];
+    const cell=h("div",{style:{borderRadius:"7px",background:isToday?active.color+"18":fM.bg+"bb",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px",position:"relative",transition:"transform 0.1s",cursor:"default"}});
+    if(hasNote) cell.appendChild(h("div",{style:{position:"absolute",top:"2px",right:"3px",fontSize:"8px"}},"📝"));
+    cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"var(--text2)",marginBottom:"2px"}},String(date.getDate())));
+    const bdgs=h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px"}});
+    for(const sh of SHIFTS) bdgs.appendChild(mkBadge(meta(status(sh,date)),sh.id,sh.color,sh.id===focus));
+    cell.appendChild(bdgs);
+    grid.appendChild(cell);
+  });
+  cal.appendChild(grid);
+
+  const leg=h("div",{style:{display:"flex",gap:"8px",marginTop:"12px",justifyContent:"center",flexWrap:"wrap"}});
+  for(const[k,l] of [["D","Day"],["N","Night"],["O","Off"],["X","Break"]]){
+    const m=meta(k);
+    leg.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"4px"}},
+      h("div",{style:{width:"10px",height:"10px",borderRadius:"3px",background:m.bg,border:`1px solid ${m.br}`}}),
+      h("span",{class:"mono",style:{fontSize:"9px",color:"var(--text2)"}},l)
+    ));
+  }
+  cal.appendChild(leg);
+  wrap.appendChild(cal);
+  return wrap;
+}
+
+function renderSummary(){
+  const active=SHIFTS.find(s=>s.id===S.focus);
+  const wrap=h("div",{class:"page"});
+  wrap.appendChild(h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)",marginBottom:"10px"}},`${active.id} Shift — Next 30 Days`));
+  const list=h("div",{style:{display:"flex",flexDirection:"column",gap:"4px"}});
+  for(let i=0;i<30;i++){
+    const date=addDays(TODAY,i),st=status(active,date),m=meta(st);
+    const isToday=i===0,note=getNote(active.id,toDateKey(date));
+    const row=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px",borderRadius:"10px",background:isToday?active.color+"12":"var(--bg4)",border:`1px solid ${isToday?active.color+"44":"var(--border2)"}`,animation:`pageIn 0.3s ease both`,animationDelay:`${Math.min(i*0.02,0.3)}s`}});
+    row.appendChild(h("div",{class:"mono",style:{fontSize:"11px",color:isToday?active.color:"var(--text2)",minWidth:"78px",fontWeight:isToday?"700":"400"}},fmt(date)));
+    row.appendChild(h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`}},m.emoji," ",m.short));
+    if(note) row.appendChild(h("span",{style:{fontSize:"11px",color:"var(--text2)",flex:"1",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}},"📝 "+note));
+    if(isToday) row.appendChild(h("span",{class:"mono",style:{fontSize:"10px",color:active.color,marginLeft:"auto",fontWeight:"700"}},"TODAY"));
+    list.appendChild(row);
+  }
+  wrap.appendChild(h("div",{class:"card"},list));
+  return wrap;
+}
+
+function renderSearch(){
+  const wrap=h("div",{class:"page"});
+  wrap.appendChild(h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)",marginBottom:"10px"}},"Search by Date"));
+  const inp=h("input",{type:"date",value:S.searchDate,style:{marginBottom:"14px"}});
+  inp.addEventListener("change",e=>set({searchDate:e.target.value}));
+  wrap.appendChild(inp);
+
+  if(S.searchDate){
+    const[y,m,d]=S.searchDate.split("-").map(Number);
+    const date=new Date(y,m-1,d);
+    wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"8px"}},`All shifts on ${fmtDate(date)}`));
+    const card=h("div",{class:"card",style:{padding:"10px"}});
+    SHIFTS.forEach((sh,i)=>{
+      const st=status(sh,date),m2=meta(st),note=getNote(sh.id,toDateKey(date));
+      const row=h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"9px 0",borderBottom:i<SHIFTS.length-1?"1px solid var(--border2)":"none",animation:`pageIn 0.25s ease both`,animationDelay:`${i*0.06}s`}});
+      row.appendChild(h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id));
+      row.appendChild(h("div",{style:{flex:"1"}},
+        h("div",{style:{fontSize:"13px",fontWeight:"600",color:"var(--text)"}},m2.label),
+        h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginTop:"1px"}},blockInfo(sh,date)),
+        note?h("div",{style:{fontSize:"11px",color:"var(--text2)",marginTop:"2px"}},"📝 "+note):null
+      ));
+      row.appendChild(h("span",{style:{fontSize:"20px"}},m2.emoji));
+      card.appendChild(row);
+    });
+    wrap.appendChild(card);
+
+    wrap.appendChild(h("button",{class:"share-btn",onClick:()=>{
+      const lines=[`Shift Summary — ${fmtDate(date)}`,""];
+      for(const sh of SHIFTS){
+        const m2=meta(status(sh,date)),note=getNote(sh.id,toDateKey(date));
+        lines.push(`${sh.id} Shift: ${m2.emoji} ${m2.label}${note?" · "+note:""}`);
+      }
+      const txt=lines.join("\n");
+      if(navigator.share){navigator.share({title:"Shift Summary",text:txt}).catch(()=>{});}
+      else{navigator.clipboard&&navigator.clipboard.writeText(txt);alert("Copied!");}
+    }},"📤  Share this day"));
+  }
+  return wrap;
+}
+
+function renderWhosOn(){
+  const wrap=h("div",{class:"page"});
+  wrap.appendChild(h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"12px"}},
+    h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)"}},"Who's Working"),
+    h("div",{class:"mono",style:{fontSize:"11px",color:"var(--text3)"}},fmt(TODAY))
+  ));
+  const groups={D:[],N:[],O:[],X:[]};
+  for(const sh of SHIFTS){const st=status(sh,TODAY);if(groups[st])groups[st].push(sh);}
+  let i=0;
+  for(const[st,shifts] of Object.entries(groups)){
+    if(!shifts.length)continue;
+    const m=meta(st);
+    const card=h("div",{class:"card",style:{border:`1px solid ${m.br}44`,marginBottom:"10px",animation:`pageIn 0.3s ease both`,animationDelay:`${i*0.07}s`}});
+    card.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"10px"}},
+      h("span",{style:{fontSize:"22px"}},m.emoji),
+      h("span",{style:{fontWeight:"700",fontSize:"15px",color:m.fg}},m.label),
+      h("span",{class:"mono",style:{fontSize:"11px",color:"var(--text3)",marginLeft:"auto"}},`${shifts.length} shift${shifts.length!==1?"s":""}`)
+    ));
+    const row=h("div",{style:{display:"flex",gap:"8px",flexWrap:"wrap"}});
+    for(const sh of shifts){
+      row.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"6px",padding:"8px 14px",borderRadius:"10px",background:sh.color+"12",border:`1px solid ${sh.color}33`}},
+        h("span",{style:{fontWeight:"700",fontSize:"18px",color:sh.color}},sh.id),
+        h("span",{style:{fontSize:"12px",color:"var(--text2)"}},"Shift")
+      ));
+    }
+    card.appendChild(row);
+    wrap.appendChild(card);
+    i++;
+  }
+  return wrap;
+}
+
+function renderStats(){
+  const wrap=h("div",{class:"page"});
+  wrap.appendChild(h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)",marginBottom:"12px"}},`Stats — ${TODAY.getFullYear()}`));
+  SHIFTS.forEach((sh,i)=>{
+    const stats=getYearStats(sh,TODAY.getFullYear());
+    const card=h("div",{class:"card",style:{marginBottom:"10px"}});
+    card.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}},
+      h("div",{style:{width:"32px",height:"32px",borderRadius:"9px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"16px",color:sh.color}},sh.id),
+      h("span",{style:{fontWeight:"700",fontSize:"14px",color:"var(--text)"}},"Shift Stats"),
+      h("span",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",marginLeft:"auto"}},`${TODAY.getFullYear()}`)
+    ));
+    const grid=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"6px"}});
+    for(const[k,label,col] of [["D","Days","#854d0e"],["N","Nights","#3730a3"],["O","Off","#166534"],["X","Break","#9d174d"]]){
+      grid.appendChild(h("div",{class:"stat-box"},
+        h("div",{style:{fontSize:"24px",fontWeight:"700",color:col}},stats[k]),
+        h("div",{class:"mono",style:{fontSize:"9px",color:"var(--text2)",marginTop:"3px"}},label)
+      ));
+    }
+    card.appendChild(grid);
+    wrap.appendChild(card);
+  });
+  return wrap;
+}
+
+function renderNotes(){
+  const wrap=h("div",{class:"page"});
+  wrap.appendChild(h("div",{style:{fontWeight:"700",fontSize:"15px",color:"var(--text)",marginBottom:"12px"}},"Shift Notes"));
+
+  const form=h("div",{class:"card",style:{marginBottom:"12px"}});
+  form.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"12px"}},"Add Note"));
+
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Shift"));
+  const shiftRow=h("div",{style:{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}});
+  for(const sh of SHIFTS){
+    const sel=S.noteShift===sh.id;
+    shiftRow.appendChild(h("button",{
+      style:{padding:"7px 16px",borderRadius:"9px",border:`2px solid ${sel?sh.color:"var(--border)"}`,background:sel?sh.color+"14":"var(--bg2)",color:sel?sh.color:"var(--text2)",fontWeight:sel?"700":"400",cursor:"pointer",fontSize:"13px",fontFamily:"inherit",transition:"all 0.15s"},
+      onClick:()=>set({noteShift:sh.id})
+    },sh.id));
+  }
+  form.appendChild(shiftRow);
+
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Date"));
+  const dateInp=h("input",{type:"date",value:S.noteDate,style:{marginBottom:"14px"}});
+  dateInp.addEventListener("change",e=>set({noteDate:e.target.value}));
+  form.appendChild(dateInp);
+
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"var(--text3)",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Note"));
+  const ta=h("textarea",{placeholder:"e.g. Covering for John, Training day, Overtime..."},S.noteText||"");
+  ta.addEventListener("input",e=>{S.noteText=e.target.value;});
+  form.appendChild(ta);
+
+  form.appendChild(h("button",{class:"action-btn",style:{marginTop:"12px"},
+    onClick:()=>{
+      if(!S.noteDate)return;
+      const[y,m,d]=S.noteDate.split("-").map(Number);
+      saveNote(S.noteShift,toDateKey(new Date(y,m-1,d)),S.noteText||"");
+      set({noteDate:"",noteText:""});
+    }
+  },"Save Note"));
+  wrap.appendChild(form);
+
+  const notes=getAllNotes();
+  if(notes.length){
+    wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"var(--text)",marginBottom:"8px"}},"All Notes"));
+    const list=h("div",{class:"card",style:{padding:"10px"}});
+    notes.forEach((note,i)=>{
+      const sh=SHIFTS.find(s=>s.id===note.shiftId);
+      const st=status(sh,note.date),m=meta(st);
+      const row=h("div",{style:{display:"flex",alignItems:"flex-start",gap:"8px",padding:"9px 0",borderBottom:i<notes.length-1?"1px solid var(--border2)":"none",animation:`pageIn 0.25s ease both`,animationDelay:`${i*0.05}s`}});
+      row.appendChild(h("div",{style:{width:"26px",height:"26px",borderRadius:"7px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"13px",color:sh.color,flexShrink:"0"}},sh.id));
+      row.appendChild(h("div",{style:{flex:"1"}},
+        h("div",{style:{fontSize:"12px",fontWeight:"600",color:"var(--text)"}},fmtDate(note.date)),
+        h("div",{class:"mono",style:{fontSize:"10px",color:m.fg,marginTop:"1px"}},m.short),
+        h("div",{style:{fontSize:"12px",color:"var(--text2)",marginTop:"4px",lineHeight:"1.4"}},note.note)
+      ));
+      row.appendChild(h("button",{class:"delete-btn",onClick:()=>{saveNote(note.shiftId,note.key,"");draw();}},"✕"));
+      list.appendChild(row);
+    });
+    wrap.appendChild(list);
+  } else {
+    wrap.appendChild(h("div",{class:"card",style:{textAlign:"center",color:"var(--text3)",fontSize:"13px",padding:"28px"}},"No notes yet"));
+  }
+  return wrap;
+}
+
+// ── Main draw ─────────────────────────────────────────────────────────────────
+function draw(){
+  const{focus,tab,banner,dark}=S;
+  const active=SHIFTS.find(s=>s.id===focus);
+
+  document.body.classList.toggle("dark",dark);
+  document.getElementById("theme-meta").content=dark?"#0f172a":"#f1f5f9";
+
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone=window.navigator.standalone||matchMedia("(display-mode:standalone)").matches;
+
+  const app=document.getElementById("app");
+  app.innerHTML="";
+
+  // iOS banner
+  if(banner&&isIOS&&!isStandalone){
+    app.appendChild(h("div",{class:"ios-banner"},
+      h("p",{style:{fontSize:"12px",color:"var(--text2)",lineHeight:"1.5",flex:"1"}},
+        h("strong",{style:{color:"var(--text)"}},"📲 Add to Home Screen "),
+        `Open in Safari → Share ⬆ → "Add to Home Screen"`
+      ),
+      h("button",{style:{background:"none",border:"none",color:"var(--text3)",fontSize:"20px",cursor:"pointer"},onClick:()=>set({banner:false})},"✕")
+    ));
+  }
+
+  // Top bar
+  app.appendChild(h("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:"14px"}},
+    h("div",{},
+      h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"var(--text)"}},"Shift Tracker"),
+      h("p",{class:"mono",style:{fontSize:"9px",color:"var(--text3)",marginTop:"2px"}},"2D · 2N · 4OFF × 7 + 14 break = 70-day cycle")
+    ),
+    h("button",{class:"icon-btn",onClick:()=>{const d=!S.dark;setDark(d);set({dark:d})}},dark?"☀️":"🌙")
+  ));
+
+  // Shift pills
+  const pills=h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
+  for(const sh of SHIFTS){
+    const st=status(sh,TODAY),m=meta(st),sel=sh.id===focus;
+    pills.appendChild(h("div",{class:"pill",
+      style:{background:sel?"var(--bg2)":"var(--bg3)",border:`2px solid ${sel?sh.color:"var(--border)"}`,borderRadius:"12px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 3px 12px ${sh.color}30`:"none"},
+      onClick:()=>set({focus:sh.id})},
+      h("div",{style:{fontSize:"18px",fontWeight:"700",color:sh.color}},sh.id),
+      h("div",{style:{fontSize:"14px",margin:"2px 0"}},m.emoji),
+      h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short)
+    ));
+  }
+  app.appendChild(pills);
+
+  // Countdown strip on non-Today tabs
+  if(tab!=="Today") app.appendChild(renderCountdownStrip(active));
+
+  // Tabs
+  const tabBar=h("div",{style:{display:"flex",gap:"3px",background:"var(--bg3)",borderRadius:"11px",padding:"3px",marginBottom:"14px",overflowX:"auto",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",msOverflowStyle:"none"}});
+  for(const t of TABS)
+    tabBar.appendChild(h("button",{class:`tab${tab===t?" active":""}`,onClick:()=>set({tab:t})},t));
+  app.appendChild(tabBar);
+
+  // Page content
+  if(tab==="Today")    app.appendChild(renderToday(active));
+  if(tab==="Calendar") app.appendChild(renderCalendar());
+  if(tab==="Summary")  app.appendChild(renderSummary());
+  if(tab==="Search")   app.appendChild(renderSearch());
+  if(tab==="Who's On") app.appendChild(renderWhosOn());
+  if(tab==="Stats")    app.appendChild(renderStats());
+  if(tab==="Notes")    app.appendChild(renderNotes());
+
+  // Shift key
+  const key=h("div",{style:{display:"flex",gap:"10px",marginTop:"14px",justifyContent:"center",flexWrap:"wrap"}});
+  for(const sh of SHIFTS){
+    key.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"4px"}},
+      h("div",{style:{width:"9px",height:"9px",borderRadius:"2px",background:sh.color}}),
+      h("span",{class:"mono",style:{fontSize:"9px",color:"var(--text2)"}},`${sh.id} Shift`)
+    ));
+  }
+  app.appendChild(key);
+}
+
+// ── Splash ────────────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded",()=>{
+  // Apply dark immediately to avoid flash
+  if(getDark()) document.body.classList.add("dark");
+
+  draw();
+
+  // Hide splash after short delay
+  setTimeout(()=>{
+    const splash=document.getElementById("splash");
+    const wrap=document.getElementById("app-wrap");
+    splash.classList.add("hide");
+    wrap.classList.add("visible");
+    setTimeout(()=>{ splash.style.display="none"; },700);
+  }, 1800);
+});
+</script>
+</body>
+</html>
