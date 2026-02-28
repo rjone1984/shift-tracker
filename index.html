@@ -10,6 +10,10 @@
 <title>Shift Tracker</title>
 
 <link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Shift Tracker">
+<link rel="apple-touch-icon" href="icon.png">
 
 <script>
 if ("serviceWorker" in navigator) {
@@ -175,7 +179,7 @@ function getYearStats(shift, year) {
 }
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-const TABS = ["Calendar","Summary","Search","Who's On","Stats","Swaps"];
+const TABS = ["Calendar","Summary","Search","Who's On","Stats"];
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let S = {
@@ -183,7 +187,27 @@ let S = {
   focus: "E", tab: "Calendar", banner: true,
   searchDate: "", swapShift: "E", swapDate: "", swapTo: "D",
 };
-const set = patch => { S = {...S, ...patch}; draw(); };
+const set = patch => { S = {...S, ...patch}; 
+// PWA Install button logic
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById("installBtn");
+  if (btn) btn.style.display = "block";
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const btn = document.getElementById("installBtn");
+    if (btn) btn.style.display = "none";
+  });
+}
+
+draw(); };
 
 // ── DOM ───────────────────────────────────────────────────────────────────────
 function h(tag, props, ...kids) {
@@ -248,6 +272,24 @@ function renderCalendar() {
   const days = calDays(year, month);
 
   const cal = h("div",{class:"card",style:{padding:"12px 10px"}});
+  // Enable swipe left/right to change month
+  let startX = 0;
+  cal.addEventListener("touchstart", e => {
+    startX = e.touches[0].clientX;
+  });
+
+  cal.addEventListener("touchend", e => {
+    const endX = e.changedTouches[0].clientX;
+    const diff = endX - startX;
+    if (Math.abs(diff) > 50) {
+      if (diff < 0) {
+        month===11?set({year:year+1,month:0}):set({month:month+1});
+      } else {
+        month===0?set({year:year-1,month:11}):set({month:month-1});
+      }
+    }
+  });
+
   cal.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}},
     h("button",{class:"nav-btn",onClick:()=>month===0?set({year:year-1,month:11}):set({month:month-1})},"‹"),
     h("span",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a"}},`${MONTHS[month]} ${year}`),
@@ -395,85 +437,6 @@ function renderStats() {
   return wrap;
 }
 
-function renderSwaps() {
-  const wrap = h("div",{});
-  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},"Shift Swaps"));
-
-  // Add swap form
-  const form = h("div",{class:"card",style:{marginBottom:"12px"}});
-  form.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"#0f172a",marginBottom:"10px"}},"Add Swap"));
-
-  // Shift selector
-  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Shift"));
-  const shiftRow = h("div",{style:{display:"flex",gap:"6px",marginBottom:"12px",flexWrap:"wrap"}});
-  for (const sh of SHIFTS) {
-    const sel = S.swapShift===sh.id;
-    const btn = h("button",{
-      style:{padding:"6px 14px",borderRadius:"8px",border:`2px solid ${sel?sh.color:"#cbd5e1"}`,background:sel?sh.color+"12":"#fff",color:sel?sh.color:"#64748b",fontWeight:sel?"700":"400",cursor:"pointer",fontSize:"13px",fontFamily:"inherit"},
-      onClick:()=>set({swapShift:sh.id})
-    },sh.id);
-    shiftRow.appendChild(btn);
-  }
-  form.appendChild(shiftRow);
-
-  // Date
-  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Date"));
-  const dateInp = h("input",{type:"date",value:S.swapDate,style:{marginBottom:"12px"}});
-  dateInp.addEventListener("change",e=>set({swapDate:e.target.value}));
-  form.appendChild(dateInp);
-
-  // Swap to
-  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Swapped To"));
-  const toRow = h("div",{style:{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}});
-  for (const [k,label] of [["D","Day"],["N","Night"],["O","Off"],["X","Break"]]) {
-    const m = meta(k);
-    const sel = S.swapTo===k;
-    const btn = h("button",{
-      style:{padding:"6px 12px",borderRadius:"8px",border:`2px solid ${sel?m.br:"#cbd5e1"}`,background:sel?m.bg:"#fff",color:sel?m.fg:"#64748b",fontWeight:sel?"700":"400",cursor:"pointer",fontSize:"12px",fontFamily:"inherit"},
-      onClick:()=>set({swapTo:k})
-    },m.emoji+" "+label);
-    toRow.appendChild(btn);
-  }
-  form.appendChild(toRow);
-
-  // Save button
-  form.appendChild(h("button",{
-    style:{width:"100%",padding:"10px",borderRadius:"8px",background:"#1e293b",color:"#fff",border:"none",fontWeight:"600",fontSize:"14px",cursor:"pointer",fontFamily:"inherit"},
-    onClick:()=>{
-      if (!S.swapDate) return;
-      const [y,m,d] = S.swapDate.split("-").map(Number);
-      addSwap(S.swapShift, new Date(y,m-1,d), S.swapTo);
-      set({swapDate:""});
-    }
-  },"Save Swap"));
-  wrap.appendChild(form);
-
-  // Existing swaps list
-  const swapList = getSwapList();
-  if (swapList.length) {
-    wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"#0f172a",marginBottom:"8px"}},"Recorded Swaps"));
-    const list = h("div",{class:"card",style:{padding:"10px"}});
-    for (const swap of swapList) {
-      const sh   = SHIFTS.find(s=>s.id===swap.shiftId);
-      const m    = meta(swap.status);
-      const orig = CYCLE[cycleDay(sh, swap.date)];
-      const oM   = meta(orig);
-      list.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",padding:"8px 0",borderBottom:"1px solid #f1f5f9"}},
-        h("div",{style:{width:"24px",height:"24px",borderRadius:"6px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"12px",color:sh.color}},sh.id),
-        h("div",{style:{flex:"1"}},
-          h("div",{style:{fontSize:"12px",fontWeight:"600",color:"#0f172a"}},fmtDate(swap.date)),
-          h("div",{style:{fontSize:"11px",color:"#64748b",marginTop:"1px"}},`${oM.short} → ${m.short}`)
-        ),
-        h("button",{class:"delete-btn",onClick:()=>{ removeSwap(swap.shiftId,swap.key); draw(); }},"✕")
-      ));
-    }
-    wrap.appendChild(list);
-  } else {
-    wrap.appendChild(h("div",{class:"card",style:{textAlign:"center",color:"#94a3b8",fontSize:"13px",padding:"24px"}},"No swaps recorded yet"));
-  }
-  return wrap;
-}
-
 // ── Main draw ─────────────────────────────────────────────────────────────────
 function draw() {
   const { focus, tab, banner } = S;
@@ -495,7 +458,24 @@ function draw() {
   // Header
   app.appendChild(h("div",{style:{marginBottom:"14px"}},
     h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"#0f172a"}},"Shift Rota Tracker"),
-    h("p",{class:"mono",style:{fontSize:"10px",color:"#94a3b8",marginTop:"2px"}},"2D · 2N · 4OFF × 7 + 14 break = 70-day cycle")
+    h("p",{class:"mono",style:{fontSize:"10px",color:"#94a3b8",marginTop:"2px"}},"2D · 2N · 4OFF × 7 + 14 break = 70-day cycle"),
+h("button",{
+  id:"installBtn",
+  style:{
+    display:"none",
+    marginTop:"8px",
+    padding:"10px 14px",
+    borderRadius:"10px",
+    background:"#1e293b",
+    color:"#fff",
+    border:"none",
+    fontWeight:"600",
+    fontSize:"14px",
+    cursor:"pointer"
+  },
+  onClick:installApp
+},"📲 Install App"),
+
   ));
 
   // Shift pills
@@ -531,8 +511,7 @@ function draw() {
   if (tab==="Search")    app.appendChild(renderSearch());
   if (tab==="Who's On")  app.appendChild(renderWhosOn());
   if (tab==="Stats")     app.appendChild(renderStats());
-  if (tab==="Swaps")     app.appendChild(renderSwaps());
-
+  
   // Shift key
   const key = h("div",{style:{display:"flex",gap:"10px",marginTop:"12px",justifyContent:"center",flexWrap:"wrap"}});
   for (const sh of SHIFTS) {
@@ -542,6 +521,26 @@ function draw() {
     ));
   }
   app.appendChild(key);
+}
+
+
+// PWA Install button logic
+let deferredPrompt;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById("installBtn");
+  if (btn) btn.style.display = "block";
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const btn = document.getElementById("installBtn");
+    if (btn) btn.style.display = "none";
+  });
 }
 
 draw();
