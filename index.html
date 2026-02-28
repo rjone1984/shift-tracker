@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Shift Tracker">
+<meta name="theme-color" content="#f1f5f9">
+<title>Shift Tracker</title>
+
+<link rel="manifest" href="manifest.json">
+
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js");
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: #f1f5f9;
+    color: #1e293b;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; min-height: 100dvh;
+    padding: max(env(safe-area-inset-top), 16px) 12px max(env(safe-area-inset-bottom), 40px);
+  }
+  .mono { font-family: ui-monospace, 'Courier New', monospace; }
+  .pill { transition: all 0.15s; cursor: pointer; user-select: none; -webkit-user-select: none; }
+  .pill:active { transform: scale(0.94); }
+  .nav-btn { background: #fff; border: 1px solid #cbd5e1; color: #475569; border-radius: 8px; padding: 6px 16px; cursor: pointer; font-size: 20px; line-height: 1; font-family: inherit; }
+  .nav-btn:active { background: #e2e8f0; }
+  .tab { cursor: pointer; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: all 0.15s; white-space: nowrap; border: none; background: none; font-family: inherit; color: #64748b; }
+  .tab.active { background: #fff; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .tab:active { opacity: 0.7; }
+  input[type="date"], input[type="text"] { font-family: inherit; font-size: 14px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; width: 100%; background: #fff; color: #1e293b; outline: none; }
+  input:focus { border-color: #94a3b8; }
+  .card { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); margin-bottom: 12px; }
+  .swap-btn { background: none; border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 12px; font-family: inherit; color: #475569; transition: all 0.15s; }
+  .swap-btn:hover { border-color: #94a3b8; color: #1e293b; }
+  .swap-btn.active { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .delete-btn { background: none; border: none; color: #ef4444; cursor: pointer; font-size: 16px; padding: 0 4px; }
+  .ios-banner { background: #fff; border: 1px solid #f87171; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; }
+  .ios-banner p { font-size: 12px; color: #64748b; line-height: 1.5; flex: 1; }
+  .ios-x { background: none; border: none; color: #94a3b8; font-size: 18px; cursor: pointer; padding: 0; }
+  .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; }
+  .badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 600; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+<div id="app" style="max-width:800px;margin:0 auto"></div>
+<script>
+// ── Cycle ─────────────────────────────────────────────────────────────────────
+function buildCycle() {
+  const c = [];
+  for (let b = 0; b < 6; b++) c.push("D","D","N","N","O","O","O","O");
+  c.push("D","D","N","N","X","X","X","X");
+  for (let i = 0; i < 14; i++) c.push("X");
+  return c;
+}
+const CYCLE = buildCycle();
+
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function diff(a, b) { return Math.round((b-a)/86400000); }
+function fmt(d) { return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"}); }
+function fmtFull(d) { return d.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"}); }
+function fmtDate(d) { return d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"}); }
+function toDateKey(d) { return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`; }
+
+const _n = new Date();
+const TODAY = new Date(_n.getFullYear(), _n.getMonth(), _n.getDate());
+
+const SHIFTS = [
+  { id:"A", color:"#2563eb", start: new Date(2025,11,8)  },
+  { id:"B", color:"#059669", start: new Date(2025,10,24) },
+  { id:"C", color:"#9333ea", start: new Date(2025,10,10) },
+  { id:"D", color:"#d97706", start: new Date(2025, 9,27) },
+  { id:"E", color:"#dc2626", start: new Date(2025,11,22) },
+];
+
+function cycleDay(shift, date) { return ((diff(shift.start, date) % 70) + 70) % 70; }
+function status(shift, date) {
+  const key = toDateKey(date);
+  // Check swaps
+  const swaps = getSwaps();
+  if (swaps[shift.id] && swaps[shift.id][key]) return swaps[shift.id][key];
+  return CYCLE[cycleDay(shift, date)];
+}
+
+function meta(s) {
+  if (s==="D") return { label:"Day Shift",   short:"DAY",   emoji:"☀️",  bg:"#fef9c3", fg:"#854d0e", br:"#fde047" };
+  if (s==="N") return { label:"Night Shift", short:"NIGHT", emoji:"🌙",  bg:"#e0e7ff", fg:"#3730a3", br:"#a5b4fc" };
+  if (s==="O") return { label:"Days Off",    short:"OFF",   emoji:"🛋️", bg:"#dcfce7", fg:"#166534", br:"#86efac" };
+  if (s==="X") return { label:"Long Break",  short:"BREAK", emoji:"✈️",  bg:"#fce7f3", fg:"#9d174d", br:"#f9a8d4" };
+  if (s==="S") return { label:"Swapped",     short:"SWAP",  emoji:"🔄",  bg:"#fef3c7", fg:"#92400e", br:"#fbbf24" };
+  return { label:"—", short:"—", emoji:"", bg:"#f1f5f9", fg:"#64748b", br:"#cbd5e1" };
+}
+
+function blockInfo(shift, date) {
+  const d = cycleDay(shift, date);
+  if (d >= 52) return `Break · day ${d-51} of 18`;
+  const block = Math.floor(d/8)+1, pos = d%8;
+  if (pos<2) return `Block ${block} · Day ${pos+1} of 2`;
+  if (pos<4) return `Block ${block} · Night ${pos-1} of 2`;
+  return `Block ${block} · Rest day ${pos-3} of 4`;
+}
+
+function nextChange(shift, date) {
+  const d = cycleDay(shift, date), cur = CYCLE[d];
+  let i = 1;
+  while (i<70 && CYCLE[(d+i)%70]===cur) i++;
+  return { days: i, date: addDays(date, i), status: CYCLE[(d+i)%70] };
+}
+
+function nextBreak(shift) {
+  let i = 0;
+  while (i < 140) {
+    const st = CYCLE[cycleDay(shift, addDays(TODAY, i))];
+    if (st === "X") break;
+    i++;
+  }
+  return i;
+}
+
+function calDays(year, month) {
+  const first = new Date(year, month, 1);
+  const last  = new Date(year, month+1, 0);
+  const pad   = first.getDay()===0 ? 6 : first.getDay()-1;
+  const out   = Array(pad).fill(null);
+  for (let d=1; d<=last.getDate(); d++) out.push(new Date(year,month,d));
+  const trail = (Math.ceil(out.length/7)*7) - out.length;
+  for (let i=0; i<trail; i++) out.push(null);
+  return out;
+}
+
+// ── Storage ───────────────────────────────────────────────────────────────────
+function getSwaps() {
+  try { return JSON.parse(localStorage.getItem("swaps")||"{}"); } catch { return {}; }
+}
+function saveSwaps(s) { localStorage.setItem("swaps", JSON.stringify(s)); }
+function addSwap(shiftId, date, newStatus) {
+  const s = getSwaps();
+  if (!s[shiftId]) s[shiftId] = {};
+  s[shiftId][toDateKey(date)] = newStatus;
+  saveSwaps(s);
+}
+function removeSwap(shiftId, dateKey) {
+  const s = getSwaps();
+  if (s[shiftId]) { delete s[shiftId][dateKey]; saveSwaps(s); }
+}
+function getSwapList() {
+  const s = getSwaps();
+  const list = [];
+  for (const [shiftId, days] of Object.entries(s)) {
+    for (const [key, st] of Object.entries(days)) {
+      const [y,m,d] = key.split("-").map(Number);
+      list.push({ shiftId, date: new Date(y,m,d), status: st, key });
+    }
+  }
+  return list.sort((a,b) => a.date-b.date);
+}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+function getYearStats(shift, year) {
+  const start = new Date(year, 0, 1);
+  const end   = new Date(year, 11, 31);
+  let D=0,N=0,O=0,X=0;
+  for (let d=new Date(start); d<=end; d=addDays(d,1)) {
+    const s = status(shift, d);
+    if (s==="D") D++; else if (s==="N") N++;
+    else if (s==="O") O++; else if (s==="X") X++;
+  }
+  return {D,N,O,X};
+}
+
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const TABS = ["Calendar","Summary","Search","Who's On","Stats","Swaps"];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let S = {
+  year: TODAY.getFullYear(), month: TODAY.getMonth(),
+  focus: "E", tab: "Calendar", banner: true,
+  searchDate: "", swapShift: "E", swapDate: "", swapTo: "D",
+};
+const set = patch => { S = {...S, ...patch}; draw(); };
+
+// ── DOM ───────────────────────────────────────────────────────────────────────
+function h(tag, props, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(props||{})) {
+    if (k==="style" && typeof v==="object") Object.assign(e.style, v);
+    else if (k==="class") e.className = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(), v);
+    else e.setAttribute(k, v);
+  }
+  for (const k of kids.flat(9)) {
+    if (k==null) continue;
+    e.appendChild(typeof k==="string" ? document.createTextNode(k) : k);
+  }
+  return e;
+}
+
+function mkBadge(m, id, color, isFocus) {
+  return h("div",{style:{display:"flex",alignItems:"center",gap:"2px",padding:"1px 3px",borderRadius:"3px",background:m.bg,border:`1px solid ${isFocus?color:m.br+"66"}`,boxShadow:isFocus?`0 0 4px ${color}44`:"none"}},
+    h("span",{class:"mono",style:{fontSize:"8px",fontWeight:"700",color,lineHeight:"1",minWidth:"7px"}},id),
+    h("span",{class:"mono",style:{fontSize:"8px",color:m.fg,lineHeight:"1"}},m.short)
+  );
+}
+
+// ── Render sections ───────────────────────────────────────────────────────────
+function renderCountdown(active) {
+  const nb = nextBreak(active);
+  const nx = nextChange(active, TODAY);
+  const nxM = meta(nx.status);
+  const tSt = status(active, TODAY);
+  const tM  = meta(tSt);
+
+  return h("div",{class:"card",style:{border:`1px solid ${active.color}44`,boxShadow:`0 2px 12px ${active.color}15`}},
+    h("div",{style:{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"center"}},
+      h("div",{style:{flex:"1",minWidth:"130px"}},
+        h("div",{class:"mono",style:{fontSize:"9px",color:"#94a3b8",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"4px"}},`${active.id} Shift · ${fmt(TODAY)}`),
+        h("div",{style:{fontSize:"19px",fontWeight:"700",color:"#0f172a"}},`${tM.emoji} ${tM.label}`),
+        h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",marginTop:"3px"}},blockInfo(active,TODAY))
+      ),
+      h("div",{style:{textAlign:"right",minWidth:"120px"}},
+        h("div",{class:"mono",style:{fontSize:"9px",color:"#94a3b8",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:"4px"}},"Next change"),
+        h("div",{style:{fontSize:"15px",fontWeight:"600",color:active.color}},`${nxM.emoji} ${nxM.label}`),
+        h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",marginTop:"2px"}},`${fmtFull(nx.date)} · ${nx.days}d`)
+      )
+    ),
+    nb > 0 ? h("div",{style:{marginTop:"10px",paddingTop:"10px",borderTop:"1px solid #f1f5f9",display:"flex",alignItems:"center",gap:"8px"}},
+      h("span",{style:{fontSize:"16px"}},"✈️"),
+      h("span",{style:{fontSize:"13px",color:"#64748b"}},
+        nb===0 ? "You're on break now!" : `Next break starts in `,
+        h("strong",{style:{color:"#0f172a"}},`${nb} day${nb!==1?"s":""}`),
+        ` · ${fmtFull(addDays(TODAY,nb))}`
+      )
+    ) : h("div",{style:{marginTop:"10px",paddingTop:"10px",borderTop:"1px solid #f1f5f9"}},
+      h("span",{style:{fontSize:"13px",color:"#9d174d",fontWeight:"600"}},"✈️ Currently on long break!")
+    )
+  );
+}
+
+function renderCalendar() {
+  const { year, month, focus } = S;
+  const active = SHIFTS.find(s=>s.id===focus);
+  const days = calDays(year, month);
+
+  const cal = h("div",{class:"card",style:{padding:"12px 10px"}});
+  cal.appendChild(h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}},
+    h("button",{class:"nav-btn",onClick:()=>month===0?set({year:year-1,month:11}):set({month:month-1})},"‹"),
+    h("span",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a"}},`${MONTHS[month]} ${year}`),
+    h("button",{class:"nav-btn",onClick:()=>month===11?set({year:year+1,month:0}):set({month:month+1})},"›")
+  ));
+
+  const hdr = h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px",marginBottom:"4px"}});
+  for (const d of ["Mo","Tu","We","Th","Fr","Sa","Su"])
+    hdr.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"9px",color:"#94a3b8",padding:"2px 0"}},d));
+  cal.appendChild(hdr);
+
+  const grid = h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:"2px"}});
+  for (const date of days) {
+    if (!date) { grid.appendChild(h("div",{})); continue; }
+    const isToday = diff(TODAY,date)===0;
+    const fSt = status(active,date);
+    const fM  = meta(fSt);
+    const cell = h("div",{style:{borderRadius:"6px",background:isToday?active.color+"18":fM.bg+"cc",border:`1px solid ${isToday?active.color:fM.br+"88"}`,padding:"3px 2px 4px",minHeight:"58px"}});
+    cell.appendChild(h("div",{class:"mono",style:{textAlign:"center",fontSize:"10px",fontWeight:isToday?"700":"400",color:isToday?active.color:"#64748b",marginBottom:"2px"}},String(date.getDate())));
+    const bdgs = h("div",{style:{display:"flex",flexDirection:"column",gap:"2px",padding:"0 1px"}});
+    for (const sh of SHIFTS) bdgs.appendChild(mkBadge(meta(status(sh,date)),sh.id,sh.color,sh.id===focus));
+    cell.appendChild(bdgs);
+    grid.appendChild(cell);
+  }
+  cal.appendChild(grid);
+
+  const leg = h("div",{style:{display:"flex",gap:"8px",marginTop:"10px",justifyContent:"center",flexWrap:"wrap"}});
+  for (const [k,l] of [["D","Day"],["N","Night"],["O","Off"],["X","Break"]]) {
+    const m = meta(k);
+    leg.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"4px"}},
+      h("div",{style:{width:"10px",height:"10px",borderRadius:"3px",background:m.bg,border:`1px solid ${m.br}`}}),
+      h("span",{class:"mono",style:{fontSize:"9px",color:"#64748b"}},l)
+    ));
+  }
+  cal.appendChild(leg);
+  return cal;
+}
+
+function renderSummary() {
+  const active = SHIFTS.find(s=>s.id===S.focus);
+  const wrap = h("div",{});
+  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},`${active.id} Shift — Next 30 Days`));
+  const list = h("div",{style:{display:"flex",flexDirection:"column",gap:"4px"}});
+  for (let i=0; i<30; i++) {
+    const date = addDays(TODAY, i);
+    const st   = status(active, date);
+    const m    = meta(st);
+    const isToday = i===0;
+    list.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"8px 12px",borderRadius:"8px",background:isToday?active.color+"12":"#f8fafc",border:`1px solid ${isToday?active.color+"44":"#e2e8f0"}`}},
+      h("div",{class:"mono",style:{fontSize:"11px",color:isToday?active.color:"#64748b",minWidth:"80px",fontWeight:isToday?"700":"400"}},fmt(date)),
+      h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`}},m.emoji," ",m.short),
+      isToday ? h("span",{class:"mono",style:{fontSize:"10px",color:active.color,marginLeft:"auto"}},"TODAY") : null
+    ));
+  }
+  wrap.appendChild(h("div",{class:"card"},list));
+  return wrap;
+}
+
+function renderSearch() {
+  const wrap = h("div",{});
+  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},"Search by Date"));
+
+  const inp = h("input",{type:"date",value:S.searchDate,style:{marginBottom:"12px"}});
+  inp.addEventListener("change", e => set({searchDate:e.target.value}));
+  wrap.appendChild(inp);
+
+  if (S.searchDate) {
+    const [y,m,d] = S.searchDate.split("-").map(Number);
+    const date = new Date(y,m-1,d);
+    wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"#0f172a",marginBottom:"8px"}},`All shifts on ${fmtDate(date)}`));
+    const list = h("div",{class:"card",style:{padding:"10px"}});
+    for (const sh of SHIFTS) {
+      const st = status(sh,date);
+      const m2 = meta(st);
+      list.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"10px",padding:"8px 0",borderBottom:"1px solid #f1f5f9"}},
+        h("div",{style:{width:"28px",height:"28px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"14px",color:sh.color}},sh.id),
+        h("div",{style:{flex:"1"}},
+          h("div",{style:{fontSize:"13px",fontWeight:"600",color:"#0f172a"}},m2.label),
+          h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",marginTop:"1px"}},blockInfo(sh,date))
+        ),
+        h("div",{style:{fontSize:"18px"}},m2.emoji)
+      ));
+    }
+    wrap.appendChild(list);
+  }
+  return wrap;
+}
+
+function renderWhosOn() {
+  const wrap = h("div",{});
+  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},`Who's Working — ${fmt(TODAY)}`));
+
+  const groups = {D:[],N:[],O:[],X:[]};
+  for (const sh of SHIFTS) {
+    const st = status(sh,TODAY);
+    if (groups[st]) groups[st].push(sh);
+  }
+
+  for (const [st, shifts] of Object.entries(groups)) {
+    if (!shifts.length) continue;
+    const m = meta(st);
+    const card = h("div",{class:"card",style:{border:`1px solid ${m.br}`,marginBottom:"10px"}});
+    card.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"10px"}},
+      h("span",{style:{fontSize:"20px"}},m.emoji),
+      h("span",{style:{fontWeight:"700",fontSize:"15px",color:m.fg}},m.label),
+      h("span",{class:"mono",style:{fontSize:"11px",color:"#94a3b8",marginLeft:"auto"}},`${shifts.length} shift${shifts.length!==1?"s":""}`)
+    ));
+    const row = h("div",{style:{display:"flex",gap:"8px",flexWrap:"wrap"}});
+    for (const sh of shifts) {
+      row.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"6px",padding:"6px 10px",borderRadius:"8px",background:sh.color+"12",border:`1px solid ${sh.color}44`}},
+        h("span",{style:{fontWeight:"700",fontSize:"16px",color:sh.color}},sh.id),
+        h("span",{style:{fontSize:"12px",color:"#64748b"}},"Shift")
+      ));
+    }
+    card.appendChild(row);
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+function renderStats() {
+  const wrap = h("div",{});
+  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},`Stats — ${TODAY.getFullYear()}`));
+
+  for (const sh of SHIFTS) {
+    const stats = getYearStats(sh, TODAY.getFullYear());
+    const total = stats.D + stats.N + stats.O + stats.X;
+    const card = h("div",{class:"card",style:{marginBottom:"10px"}});
+    card.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",marginBottom:"10px"}},
+      h("div",{style:{width:"30px",height:"30px",borderRadius:"8px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"15px",color:sh.color}},sh.id),
+      h("span",{style:{fontWeight:"600",fontSize:"14px"}},"Shift Stats"),
+      h("span",{class:"mono",style:{fontSize:"10px",color:"#94a3b8",marginLeft:"auto"}},`${TODAY.getFullYear()}`)
+    ));
+    const grid = h("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:"6px"}});
+    for (const [k,label,col] of [["D","Days","#854d0e"],["N","Nights","#3730a3"],["O","Off","#166534"],["X","Break","#9d174d"]]) {
+      const m = meta(k);
+      grid.appendChild(h("div",{class:"stat-box"},
+        h("div",{style:{fontSize:"22px",fontWeight:"700",color:col}},stats[k]),
+        h("div",{class:"mono",style:{fontSize:"9px",color:"#64748b",marginTop:"2px"}},label)
+      ));
+    }
+    card.appendChild(grid);
+    wrap.appendChild(card);
+  }
+  return wrap;
+}
+
+function renderSwaps() {
+  const wrap = h("div",{});
+  wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"14px",color:"#0f172a",marginBottom:"10px"}},"Shift Swaps"));
+
+  // Add swap form
+  const form = h("div",{class:"card",style:{marginBottom:"12px"}});
+  form.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"#0f172a",marginBottom:"10px"}},"Add Swap"));
+
+  // Shift selector
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Shift"));
+  const shiftRow = h("div",{style:{display:"flex",gap:"6px",marginBottom:"12px",flexWrap:"wrap"}});
+  for (const sh of SHIFTS) {
+    const sel = S.swapShift===sh.id;
+    const btn = h("button",{
+      style:{padding:"6px 14px",borderRadius:"8px",border:`2px solid ${sel?sh.color:"#cbd5e1"}`,background:sel?sh.color+"12":"#fff",color:sel?sh.color:"#64748b",fontWeight:sel?"700":"400",cursor:"pointer",fontSize:"13px",fontFamily:"inherit"},
+      onClick:()=>set({swapShift:sh.id})
+    },sh.id);
+    shiftRow.appendChild(btn);
+  }
+  form.appendChild(shiftRow);
+
+  // Date
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Date"));
+  const dateInp = h("input",{type:"date",value:S.swapDate,style:{marginBottom:"12px"}});
+  dateInp.addEventListener("change",e=>set({swapDate:e.target.value}));
+  form.appendChild(dateInp);
+
+  // Swap to
+  form.appendChild(h("div",{class:"mono",style:{fontSize:"10px",color:"#64748b",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:"6px"}},"Swapped To"));
+  const toRow = h("div",{style:{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}});
+  for (const [k,label] of [["D","Day"],["N","Night"],["O","Off"],["X","Break"]]) {
+    const m = meta(k);
+    const sel = S.swapTo===k;
+    const btn = h("button",{
+      style:{padding:"6px 12px",borderRadius:"8px",border:`2px solid ${sel?m.br:"#cbd5e1"}`,background:sel?m.bg:"#fff",color:sel?m.fg:"#64748b",fontWeight:sel?"700":"400",cursor:"pointer",fontSize:"12px",fontFamily:"inherit"},
+      onClick:()=>set({swapTo:k})
+    },m.emoji+" "+label);
+    toRow.appendChild(btn);
+  }
+  form.appendChild(toRow);
+
+  // Save button
+  form.appendChild(h("button",{
+    style:{width:"100%",padding:"10px",borderRadius:"8px",background:"#1e293b",color:"#fff",border:"none",fontWeight:"600",fontSize:"14px",cursor:"pointer",fontFamily:"inherit"},
+    onClick:()=>{
+      if (!S.swapDate) return;
+      const [y,m,d] = S.swapDate.split("-").map(Number);
+      addSwap(S.swapShift, new Date(y,m-1,d), S.swapTo);
+      set({swapDate:""});
+    }
+  },"Save Swap"));
+  wrap.appendChild(form);
+
+  // Existing swaps list
+  const swapList = getSwapList();
+  if (swapList.length) {
+    wrap.appendChild(h("div",{style:{fontWeight:"600",fontSize:"13px",color:"#0f172a",marginBottom:"8px"}},"Recorded Swaps"));
+    const list = h("div",{class:"card",style:{padding:"10px"}});
+    for (const swap of swapList) {
+      const sh   = SHIFTS.find(s=>s.id===swap.shiftId);
+      const m    = meta(swap.status);
+      const orig = CYCLE[cycleDay(sh, swap.date)];
+      const oM   = meta(orig);
+      list.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"8px",padding:"8px 0",borderBottom:"1px solid #f1f5f9"}},
+        h("div",{style:{width:"24px",height:"24px",borderRadius:"6px",background:sh.color+"18",border:`2px solid ${sh.color}`,display:"flex",alignItems:"center",justifyContent:"center",fontWeight:"700",fontSize:"12px",color:sh.color}},sh.id),
+        h("div",{style:{flex:"1"}},
+          h("div",{style:{fontSize:"12px",fontWeight:"600",color:"#0f172a"}},fmtDate(swap.date)),
+          h("div",{style:{fontSize:"11px",color:"#64748b",marginTop:"1px"}},`${oM.short} → ${m.short}`)
+        ),
+        h("button",{class:"delete-btn",onClick:()=>{ removeSwap(swap.shiftId,swap.key); draw(); }},"✕")
+      ));
+    }
+    wrap.appendChild(list);
+  } else {
+    wrap.appendChild(h("div",{class:"card",style:{textAlign:"center",color:"#94a3b8",fontSize:"13px",padding:"24px"}},"No swaps recorded yet"));
+  }
+  return wrap;
+}
+
+// ── Main draw ─────────────────────────────────────────────────────────────────
+function draw() {
+  const { focus, tab, banner } = S;
+  const active = SHIFTS.find(s=>s.id===focus);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone || matchMedia("(display-mode:standalone)").matches;
+
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+
+  // iOS banner
+  if (banner && isIOS && !isStandalone) {
+    app.appendChild(h("div",{class:"ios-banner"},
+      h("p",{},h("strong",{},"📲 Add to Home Screen "),`Open in Safari → Share ⬆ → "Add to Home Screen"`),
+      h("button",{class:"ios-x",onClick:()=>set({banner:false})},"✕")
+    ));
+  }
+
+  // Header
+  app.appendChild(h("div",{style:{marginBottom:"14px"}},
+    h("h1",{style:{fontSize:"20px",fontWeight:"700",letterSpacing:"-0.03em",color:"#0f172a"}},"Shift Rota Tracker"),
+    h("p",{class:"mono",style:{fontSize:"10px",color:"#94a3b8",marginTop:"2px"}},"2D · 2N · 4OFF × 7 + 14 break = 70-day cycle")
+  ));
+
+  // Shift pills
+  const pills = h("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:"6px",marginBottom:"12px"}});
+  for (const sh of SHIFTS) {
+    const st  = status(sh,TODAY);
+    const m   = meta(st);
+    const sel = sh.id===focus;
+    pills.appendChild(h("div",{class:"pill",
+      style:{background:sel?"#fff":"#e8edf3",border:`2px solid ${sel?sh.color:"#cbd5e1"}`,borderRadius:"11px",padding:"9px 4px",textAlign:"center",boxShadow:sel?`0 2px 10px ${sh.color}33`:"0 1px 2px rgba(0,0,0,0.06)"},
+      onClick:()=>set({focus:sh.id})},
+      h("div",{style:{fontSize:"18px",fontWeight:"700",color:sh.color}},sh.id),
+      h("div",{style:{fontSize:"14px",margin:"2px 0"}},m.emoji),
+      h("div",{class:"badge",style:{background:m.bg,color:m.fg,border:`1px solid ${m.br}`,fontSize:"9px"}},m.short)
+    ));
+  }
+  app.appendChild(pills);
+
+  // Countdown strip
+  app.appendChild(renderCountdown(active));
+
+  // Tabs
+  const tabBar = h("div",{style:{display:"flex",gap:"4px",background:"#e2e8f0",borderRadius:"10px",padding:"4px",marginBottom:"14px",overflowX:"auto",WebkitOverflowScrolling:"touch"}});
+  for (const t of TABS) {
+    const btn = h("button",{class:`tab${tab===t?" active":""}`,onClick:()=>set({tab:t})},t);
+    tabBar.appendChild(btn);
+  }
+  app.appendChild(tabBar);
+
+  // Tab content
+  if (tab==="Calendar")  app.appendChild(renderCalendar());
+  if (tab==="Summary")   app.appendChild(renderSummary());
+  if (tab==="Search")    app.appendChild(renderSearch());
+  if (tab==="Who's On")  app.appendChild(renderWhosOn());
+  if (tab==="Stats")     app.appendChild(renderStats());
+  if (tab==="Swaps")     app.appendChild(renderSwaps());
+
+  // Shift key
+  const key = h("div",{style:{display:"flex",gap:"10px",marginTop:"12px",justifyContent:"center",flexWrap:"wrap"}});
+  for (const sh of SHIFTS) {
+    key.appendChild(h("div",{style:{display:"flex",alignItems:"center",gap:"4px"}},
+      h("div",{style:{width:"9px",height:"9px",borderRadius:"2px",background:sh.color}}),
+      h("span",{class:"mono",style:{fontSize:"9px",color:"#64748b"}},`${sh.id} Shift`)
+    ));
+  }
+  app.appendChild(key);
+}
+
+draw();
+</script>
+</body>
+</html>
