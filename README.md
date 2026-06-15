@@ -1,5 +1,6 @@
-This is a relatively simple calendar to track our shift patterns through the year, and not much needed in the way of instruction.
+# Padeswood
+HeidelbergMaterials platform shell with logs, shift tracker, credit hours and holiday requests.
 
-If you choose to add it to your Home Screen when prompted it will act like a miniature 'app' for ease of use. The username and password field are in line with ECS.
-
-Created by Rob Jones
+## Quick checks
+- `npm run test:smoke`
+- `npm run test:browser` (runs Chromium + WebKit checks; install browsers with `npx playwright install chromium webkit`)

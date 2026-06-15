@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Padeswood Works">
+<meta name="theme-color" content="#111418">
+<title>Padeswood Works — Suite Starter</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ff-head:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-mono:'Fira Code',monospace;
+  --ease-smooth:cubic-bezier(.22,1,.36,1);
+  --bg:#111418; --sf:#16191f; --sf2:#1c2028; --sf3:#222830; --sf4:#282f3a;
+  --bd:#252c38; --bd2:#2f3a4a; --bd3:#3d4e62;
+  --ac:#1a7a35; --ac2:#22a847; --ac3:#2ecc5c;
+  --acd1:rgba(26,122,53,.10); --acd2:rgba(26,122,53,.18); --acd3:rgba(26,122,53,.28);
+  --palette-card-bg-1: rgba(34,168,71,.24);
+  --palette-card-bg-2: rgba(21,92,40,.12);
+  --palette-card-border: rgba(46,204,92,.24);
+  --palette-card-glow-1: rgba(46,204,92,.18);
+  --palette-card-glow-2: rgba(46,204,92,.10);
+  --tx:#dde4ee; --tx2:#9aa9be; --tx3:#6f8097;
+  --red:#f0524f; --redd:rgba(240,82,79,.10); --redb:rgba(240,82,79,.28);
+  --grn:#21c27a; --grnd:rgba(33,194,122,.10); --grnb:rgba(33,194,122,.28);
+  --amb:#f5a623; --ambd:rgba(245,166,35,.10); --ambb:rgba(245,166,35,.28);
+  --pur:#9b74e8; --purd:rgba(155,116,232,.10); --purb:rgba(155,116,232,.28);
+  --r:10px; --rsm:7px; --rxs:5px;
+  --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
+  --e2:0 4px 18px rgba(0,0,0,.6); --e3:0 20px 56px rgba(0,0,0,.72);
+  --eac:0 4px 22px rgba(26,122,53,.35);
+  --glass-1: rgba(22,25,31,.82);
+  --glass-2: rgba(22,25,31,.72);
+  --glass-3: rgba(22,25,31,.68);
+  --glass-4: rgba(22,25,31,.56);
+}
+.light-mode{
+  --bg:#fbfdff; --sf:#ffffff; --sf2:#f8fbff; --sf3:#f2f7fd; --sf4:#edf3fa;
+  --bd:#dce5f0; --bd2:#cdd8e6; --bd3:#a9bbd3;
+  --ac:#155c28; --ac2:#1a7a35; --ac3:#22a847;
+  --acd1:rgba(21,92,40,.07); --acd2:rgba(21,92,40,.14); --acd3:rgba(21,92,40,.24);
+  --palette-card-bg-1: rgba(34,168,71,.18);
+  --palette-card-bg-2: rgba(21,92,40,.10);
+  --palette-card-border: rgba(46,204,92,.20);
+  --palette-card-glow-1: rgba(46,204,92,.14);
+  --palette-card-glow-2: rgba(46,204,92,.08);
+  --tx:#0d1526; --tx2:#405063; --tx3:#74839a;
+  --red:#d93f3c; --redd:rgba(217,63,60,.07); --redb:rgba(217,63,60,.22);
+  --grn:#15924f; --grnd:rgba(21,146,79,.07); --grnb:rgba(21,146,79,.22);
+  --amb:#c97d10; --ambd:rgba(201,125,16,.07); --ambb:rgba(201,125,16,.22);
+  --pur:#7a50c8; --purd:rgba(122,80,200,.07); --purb:rgba(122,80,200,.22);
+  --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --e2:0 4px 18px rgba(0,0,0,.07); --e3:0 20px 56px rgba(0,0,0,.10);
+  --eac:0 4px 22px rgba(10,138,134,.16);
+  --glass-1: rgba(255,255,255,.96);
+  --glass-2: rgba(255,255,255,.82);
+  --glass-3: rgba(255,255,255,.92);
+  --glass-4: rgba(255,255,255,.78);
+}
+body.light-mode{
+  background:
+    radial-gradient(1200px 620px at 18% -6%, rgba(255,255,255,.98), transparent 58%),
+    radial-gradient(960px 520px at 100% 0%, var(--palette-card-glow-1), transparent 54%),
+    linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,0)),
+    var(--bg);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--ff-body);
+  background:var(--bg);
+  color:var(--tx);
+  font-size:13.5px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  transition:background .35s var(--ease-smooth),color .35s var(--ease-smooth),transform .28s var(--ease-smooth),box-shadow .28s var(--ease-smooth);
+  overflow-x:hidden;
+  animation:pageEnter .62s cubic-bezier(.16,1,.3,1) both;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  z-index:0;
+}
+/* Suite skin: frosted-glass */
+@keyframes pageEnter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes appCardIconGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(46,204,92,0))}50%{filter:drop-shadow(0 0 16px rgba(46,204,92,.14))}}
+@keyframes appBorderPulse{0%,100%{opacity:.18}50%{opacity:.35}}
+@keyframes appIconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+@keyframes iconHaloPulse{0%,100%{opacity:.52}50%{opacity:.86}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+.hidden{display:none !important}
+.auth-screen,.app-shell{position:relative;z-index:1}
+.auth-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:26px 18px;
+}
+.auth-shell{
+  width:min(560px,100%);
+  display:grid;
+  gap:14px;
+}
+.splash-hero{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:0 8px;
+}
+.splash-hero-mark{
+  width:60px;height:60px;flex-shrink:0;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,.98), rgba(255,255,255,.78) 24%, rgba(255,255,255,0) 62%),
+    linear-gradient(135deg, rgba(26,122,53,.12), rgba(46,204,92,.08));
+  border:1px solid var(--bd2);
+  box-shadow:0 12px 28px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.48);
+  overflow:hidden;
+  animation:logoFloat 8.8s cubic-bezier(.22,1,.36,1) infinite;
+}
+@keyframes logoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-2px) scale(1.03)}}
+.splash-hero-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.splash-hero-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+.splash-hero-title{
+  font-family:var(--ff-head);
+  font-size:25px;
+  line-height:1.02;
+  font-weight:800;
+  color:var(--tx);
+  letter-spacing:-0.03em;
+}
+.splash-hero-sub{
+  font-family:var(--ff-mono);
+  font-size:9px;
+  font-weight:600;
+  letter-spacing:2.4px;
+  text-transform:uppercase;
+  color:var(--tx3);
+}
+.login-card,.lic-inner,.panel,.topbar,.app-card,.palette-panel,.toast{
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.login-card{
+  width:min(560px,100%);
+  border:1px solid var(--bd);
+  border-radius:20px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e3), var(--eac);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.login-card::before,.lic-inner::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+}
+.login-card.starter-breath{animation:starterBreath 9.2s cubic-bezier(.22,1,.36,1) infinite}
+@keyframes starterBreath{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-1px) scale(1.01)}}
+.brand-row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.brand-mark{
+  width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--acd3),var(--acd1));
+  border:1px solid var(--bd2);
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  color:var(--ac3);
+  flex-shrink:0;
+}
+.brand-mark.logo-mark{background:none;border:none;box-shadow:none;padding:0}
+.brand-mark.logo-mark img{width:100%;height:100%;object-fit:contain;display:block}
+.brand-copy{min-width:0}
+.brand-title{font-family:var(--ff-head);font-weight:700;font-size:18px;color:var(--tx);letter-spacing:-.3px;line-height:1.1}
+.brand-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:var(--tx3);margin-top:3px}
+.starter-note{padding:10px 12px;border:1px solid var(--bd2);border-radius:12px;background:var(--sf3);color:var(--tx2);font-size:12px;line-height:1.55;margin-bottom:14px}
+.login-field{margin-bottom:16px}
+.login-field label,.starter-label{display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:7px}
+.starter-label{margin-bottom:8px}
+.input,.select,.textarea,.login-input,.starter-input,.starter-select,.starter-textarea{
+  width:100%;
+  padding:0 12px;
+  background:var(--sf3);
+  border:1px solid var(--bd2);
+  border-radius:var(--rsm);
+  color:var(--tx);
+  font-family:var(--ff-body);
+  font-size:13.5px;
+  transition:border-color .18s,box-shadow .18s,background .18s;
+  outline:none;
+  min-width:0;
+}
+.input,.select,.textarea{height:44px}
+.textarea{height:auto;min-height:112px;padding:12px}
+.input:focus,.select:focus,.textarea:focus,.login-input:focus,.starter-input:focus,.starter-select:focus,.starter-textarea:focus{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1)}
+.field{
+  display:grid;
+  gap:8px;
+  padding:12px;
+  border:1px solid var(--bd);
+  border-radius:16px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, var(--palette-card-glow-1), transparent 46%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 52%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
+  min-width:0;
+}
+.field label{font-size:11px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf2);
+  color:var(--tx);
+  text-decoration:none;
+  transition:transform .28s var(--ease-smooth),box-shadow .28s var(--ease-smooth),background .28s var(--ease-smooth),border-color .28s var(--ease-smooth),color .28s var(--ease-smooth),opacity .28s var(--ease-smooth),filter .28s var(--ease-smooth);
+  cursor:pointer;
+  padding:12px 16px;
+  font-family:var(--ff-head);
+  font-weight:700;
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--bd3)}
+.btn-primary{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
+.btn-primary:hover{box-shadow:0 0 0 3px var(--acd1),0 0 22px rgba(33,194,122,.18)}
+.btn-ghost{background:var(--sf3)}
+.input-row{display:flex;gap:0;border:1px solid var(--bd2);border-radius:var(--rsm);overflow:hidden;background:var(--sf3);transition:border-color .18s,box-shadow .18s,background .18s}
+.input-row:focus-within{border-color:var(--ac2);box-shadow:0 0 0 3px var(--acd1)}
+.input-row .starter-input{border:none;border-radius:0;flex:1;background:transparent}
+.starter-select{
+  height:40px;
+  padding:0 30px 0 12px;
+  border:none;
+  border-left:1px solid color-mix(in srgb, var(--bd2) 82%, var(--ac) 18%);
+  color:var(--tx2);
+  font-family:var(--ff-mono);
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:.06em;
+  cursor:pointer;
+  flex-shrink:0;
+  min-width:180px;
+  max-width:210px;
+  appearance:none;
+  -webkit-appearance:none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,0)),
+    var(--sf2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7a96' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center;
+}
+.login-btn,.starter-btn{
+  width:100%;
+  height:42px;
+  margin-top:8px;
+  background:linear-gradient(135deg,var(--ac),var(--ac3));
+  color:#fff;
+  border:none;
+  border-radius:var(--rsm);
+  font-family:var(--ff-head);
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  box-shadow:var(--eac);
+  transition:opacity .18s,transform .18s,box-shadow .18s;
+}
+.login-btn:hover,.starter-btn:hover{opacity:.92;transform:translateY(-1px)}
+.login-btn:disabled,.starter-btn:disabled{opacity:.5;cursor:not-allowed}
+.login-err,.starter-msg{
+  font-size:12px;color:var(--red);background:var(--redd);border:1px solid var(--redb);
+  border-radius:var(--rsm);padding:8px 12px;margin-top:12px;display:none
+}
+.starter-msg.ok{color:var(--grn);background:var(--grnd);border-color:var(--grnb)}
+
+#licenceOverlay{position:fixed;inset:0;background:var(--bg);z-index:10000;display:none;align-items:center;justify-content:center;padding:18px}
+.lic-inner{width:360px;max-width:92vw;text-align:center;background:var(--glass-1);border:1px solid var(--bd2);border-radius:14px;padding:36px 32px 32px;box-shadow:0 18px 48px rgba(0,0,0,.16);position:relative;overflow:hidden}
+#licenceOverlay .login-card{width:min(420px,92vw)}
+#licenceOverlay #licSpinner{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--tx3);font-size:12px;font-family:var(--ff-mono);margin:8px 0 14px}
+#licenceOverlay #licMsg{display:none;font-size:13px;color:var(--red);line-height:1.6;margin-bottom:16px}
+#licenceOverlay #licRetryBtn{display:none}
+.lic-logo{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:var(--eac)}
+.lic-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.lic-title{font-family:var(--ff-head);font-weight:700;font-size:18px;color:var(--tx);margin-bottom:4px}
+.lic-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);margin-bottom:24px}
+
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 0}
+#loginScreen::after{content:'';position:fixed;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent 0%,var(--ac) 50%,transparent 100%);opacity:.5}
+.login-inner{width:380px;max-width:94vw;position:relative;z-index:1;margin:auto;padding:8px 0}
+#loginScreen .row{margin-top:12px}
+.login-logo{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:var(--eac)}
+.login-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.login-title{font-family:var(--ff-head);font-weight:700;font-size:24px;text-align:center;letter-spacing:-.5px;margin-bottom:4px;color:var(--tx)}
+.login-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--tx3);text-align:center;margin-bottom:28px}
+
+#noAccessScreen{position:fixed;inset:0;background:var(--bg);z-index:9998;display:none;align-items:center;justify-content:center;padding:24px 18px}
+.noaccess-inner{width:min(560px,100%);display:grid;gap:14px}
+#noAccessScreen .row{margin-top:18px;justify-content:flex-end}
+.noaccess-card{border:1px solid var(--bd);border-radius:20px;background:linear-gradient(180deg,var(--glass-1),var(--glass-2));box-shadow:var(--e3), var(--eac);padding:22px;position:relative;overflow:hidden}
+.noaccess-title{font-family:var(--ff-head);font-weight:700;font-size:20px;color:var(--tx);margin-bottom:4px}
+.noaccess-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2.3px;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
+.noaccess-copy{font-size:12px;line-height:1.65;color:var(--tx2);margin:0}
+
+#appShell{display:none}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:12px 18px;
+  border-bottom:1px solid var(--bd);
+  background:
+    radial-gradient(140% 120% at 0% 0%, var(--palette-card-glow-1), transparent 42%),
+    radial-gradient(120% 120% at 100% 0%, var(--palette-card-glow-2), transparent 48%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  box-shadow:var(--e2), var(--eac);
+}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+.topbar-title{display:flex;flex-direction:column;min-width:0}
+.topbar-title .kicker{font-size:10px;font-family:var(--ff-mono);text-transform:uppercase;letter-spacing:1px;color:var(--tx3)}
+.topbar-title h1{margin:0;font-family:var(--ff-head);font-size:18px;line-height:1.1;color:var(--tx)}
+.status-dot{width:10px;height:10px;border-radius:999px;background:var(--grn);box-shadow:0 0 0 4px var(--grnd)}
+.user-chip{max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px 12px}
+.topbar .icon-btn[title="Sign out"]{color:var(--red)}
+.page{
+  position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:48px 28px 64px;
+}
+.hero{
+  margin-bottom:24px;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;
+  padding:20px;border:1px solid var(--bd);border-radius:20px;
+  background:
+    radial-gradient(140% 100% at 0% 0%, var(--palette-card-glow-1), transparent 40%),
+    radial-gradient(120% 100% at 100% 0%, var(--palette-card-glow-2), transparent 50%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-3));
+  box-shadow:var(--e2), var(--eac);
+}
+.hero h2{margin:0;font-family:var(--ff-head);font-size:28px;line-height:1.05}
+.hero p{margin:6px 0 0;color:var(--tx2);max-width:72ch}
+.eyebrow{font-size:10px;font-family:var(--ff-mono);letter-spacing:1.2px;text-transform:uppercase;color:var(--ac3);margin-bottom:6px}
+.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.stat{
+  border:1px solid var(--bd2);
+  border-radius:16px;
+  background:
+    radial-gradient(120% 100% at 0% 0%, var(--palette-card-glow-2), transparent 45%),
+    linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:11px 13px;
+  box-shadow:var(--e2), var(--eac);
+}
+.stat .label{font-family:var(--ff-mono);font-size:9px;letter-spacing:1.8px;text-transform:uppercase;color:var(--tx3);margin-bottom:8px}
+.stat .value{font-family:var(--ff-head);font-size:18px;font-weight:800;letter-spacing:-.03em;color:var(--tx);line-height:1}
+.stat .sub{font-size:12px;color:var(--tx2);margin-top:7px;line-height:1.45}
+.panel{
+  border:1px solid var(--bd2);
+  border-radius:18px;
+  background:var(--glass-3);
+  box-shadow:0 18px 44px rgba(15,23,42,.10), inset 0 1px 0 rgba(255,255,255,.05);
+  padding:18px;
+  margin-bottom:16px;
+}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.panel-title{font-family:var(--ff-head);font-weight:700;font-size:14px;color:var(--tx);margin:0}
+.panel-sub{font-family:var(--ff-mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin:4px 0 0}
+
+.palette-overlay{
+  position:fixed;inset:0;z-index:820;display:none;align-items:flex-start;justify-content:center;
+  padding:7vh 16px 24px;background:rgba(4,10,20,.56);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+}
+.palette-overlay.open{display:flex}
+.palette-panel{width:560px;max-width:min(92vw,560px);border:1px solid var(--bd2);border-radius:18px;background:var(--glass-3);box-shadow:0 18px 44px rgba(15,23,42,.10);overflow:hidden}
+.palette-head{padding:18px 22px;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.palette-title{font-family:var(--ff-head);font-weight:700;font-size:16px;color:var(--tx)}
+.palette-close{min-width:64px;height:28px;padding:0 12px;border-radius:6px;border:1px solid var(--bd2);background:transparent;color:var(--tx2);cursor:pointer;font-size:11px;font-family:var(--ff-mono);letter-spacing:1px;text-transform:uppercase}
+.palette-body{padding:18px 22px 20px;display:flex;flex-direction:column;gap:14px}
+.palette-help{font-size:12px;color:var(--tx2);line-height:1.6}
+.palette-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.palette-option{
+  display:flex;align-items:center;gap:14px;width:100%;border:1px solid var(--bd2);border-radius:14px;padding:12px;background:var(--glass-2);color:var(--tx);cursor:pointer;text-align:left;transition:transform .18s,border-color .18s,box-shadow .18s,background .18s;
+}
+.palette-option:hover{transform:translateY(-1px);border-color:var(--ac3);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.palette-option.active{border-color:var(--ac3);background:var(--acd1);box-shadow:0 0 0 1px var(--acd2),0 0 16px var(--acd1)}
+.palette-sample{width:72px;height:44px;border-radius:12px;display:grid;grid-template-columns:repeat(2,1fr);overflow:hidden;flex-shrink:0;border:1px solid var(--bd2)}
+.palette-sample span{display:block}
+.palette-meta{display:flex;flex-direction:column;gap:2px;min-width:0}
+.palette-name{font-family:var(--ff-head);font-weight:700;font-size:13px;color:var(--tx)}
+.palette-desc{font-size:11px;color:var(--tx2);line-height:1.5}
+.palette-actions{padding:14px 22px 18px;border-top:1px solid var(--bd2);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.palette-actions button{min-width:116px}
+
+@media (max-width: 640px){
+  .auth-screen{padding:10px 0 16px}
+  .auth-shell,.noaccess-inner{width:calc(100vw - 18px);max-width:calc(100vw - 18px);padding:0}
+  .login-card,.noaccess-card{padding:20px 14px 18px;border-radius:16px}
+  .login-field{margin-bottom:12px}
+  .login-input{font-size:16px}
+  .input-row{flex-direction:column;gap:8px;background:transparent;border:none;box-shadow:none;overflow:visible}
+  .input-row .starter-input{width:100%;min-height:40px;padding:0 12px;background:var(--sf3);border:1px solid var(--bd2);border-radius:var(--rsm);color:var(--tx);box-sizing:border-box}
+  .starter-select{width:100%;max-width:none;min-width:0;border-left:1px solid var(--bd2);border-top:1px solid var(--bd2);padding:0 12px;min-height:40px;border-radius:var(--rsm);text-align:left}
+  .topbar{padding:8px 10px;min-height:52px;flex-wrap:wrap;align-items:flex-start;gap:6px;overflow:visible}
+  .topbar-title{min-width:0;flex:1 1 auto}
+  .topbar-title h1{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar-title .kicker{display:none}
+  .topbar-right{flex:1 1 100%;width:100%;flex-wrap:wrap;overflow:visible;flex-shrink:0;gap:4px;justify-content:flex-start;padding-bottom:2px}
+  .user-chip{display:inline-flex;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .icon-btn{width:30px;height:30px;flex-shrink:0}
+  .page{padding:24px 12px 44px}
+  .hero{padding:16px;align-items:flex-start}
+  .hero h2{font-size:20px}
+  .summary-grid{grid-template-columns:1fr}
+  .stat{padding:12px 13px}
+  .palette-panel{max-width:calc(100vw - 16px)}
+  .palette-body,.palette-head,.palette-actions{padding-left:14px;padding-right:14px}
+}
+@media (max-width:400px){
+  .splash-hero-title,.login-title{font-size:22px}
+}
+.splash-logo img,.lic-logo img,.login-logo img,.brand-mark.logo-mark img{display:block}
+.splash-logo,.lic-logo,.login-logo,.brand-mark.logo-mark{background:none !important;box-shadow:none !important}
+</style>
+<link rel="stylesheet" href="../suite-core.css">
+</head>
+<body class="suite-frosted-glass">
+
+<div id="licenceOverlay">
+  <div class="login-card">
+    <div class="brand-row">
+      <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div>
+        <div class="brand-title">Checking licence</div>
+        <div class="brand-sub">Please wait while we verify access.</div>
+      </div>
+    </div>
+    <div id="licSpinner">
+      <span class="db-dot" aria-hidden="true"></span>
+      Verifying licence…
+    </div>
+    <div id="licMsg"></div>
+    <div id="licRetryBtn">
+      <button type="button" onclick="hideLicenceOverlay()" class="btn btn-primary">Retry</button>
+    </div>
+  </div>
+</div>
+
+<div id="loginScreen" class="auth-screen">
+  <div class="auth-shell login-inner">
+    <div class="splash-hero">
+      <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="splash-hero-copy">
+        <div class="splash-hero-title">Padeswood Works</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Suite Starter</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+        <div class="brand-copy">
+          <div class="brand-title">New App Starter</div>
+          <div class="brand-sub">Built to match the suite shell</div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="starterEmail">Email Address</label>
+        <input type="email" id="starterEmail" class="input" placeholder="name@heidelbergmaterials.com" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="starterPass">Password</label>
+        <input type="password" id="starterPass" class="input" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button type="button" class="login-btn" onclick="enterDemo()">Sign In</button>
+      <div class="login-err" id="starterErr"></div>
+      <div class="row">
+        <button type="button" class="btn btn-ghost" onclick="togglePaletteModal()">Palette</button>
+        <button type="button" class="btn btn-ghost" onclick="toggleTheme()">Theme</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="noAccessScreen" class="auth-screen">
+  <div class="auth-shell noaccess-inner">
+    <div class="splash-hero">
+      <div class="splash-hero-mark" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="splash-hero-copy">
+        <div class="splash-hero-title">Padeswood Works</div>
+        <div class="splash-hero-sub">HeidelbergMaterials · Access Denied</div>
+      </div>
+    </div>
+    <div class="login-card">
+      <div class="brand-row">
+        <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+        <div class="brand-copy">
+          <div class="brand-title">No Access</div>
+          <div class="brand-sub">Suite starter pattern</div>
+        </div>
+      </div>
+      <p class="noaccess-copy">
+        This screen matches the suite's denied-access pattern. When you replace the starter with a live app, keep this screen and route denied users back to Platform so the experience stays consistent.
+      </p>
+      <div class="row">
+        <button type="button" class="btn btn-primary" onclick="backToPlatform()">Back to Platform</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="appShell" class="app-shell hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark logo-mark md" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="topbar-title">
+        <div class="kicker">Suite starter shell</div>
+        <h1>New App Starter</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span class="pill user-chip" id="headerUser" hidden><span id="headerEmail">—</span></span>
+      <button type="button" class="icon-btn" title="Theme" onclick="toggleTheme()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+      <button type="button" class="icon-btn" title="Palette" onclick="togglePaletteModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 3a9 9 0 1 0 0 18h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4h1a2 2 0 0 0 0-4h-1a2 2 0 0 1 0-4z"/><circle cx="8" cy="8.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="6.6" cy="13" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.6" cy="15.5" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.6" cy="8.9" r="1.1" fill="currentColor" stroke="none"/></svg>
+      </button>
+      <button type="button" class="icon-btn" title="Sign out" onclick="backToLogin()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Suite starter shell</div>
+        <h2>New App Starter</h2>
+        <p>Drop your app-specific screens and data in here. The shell, spacing, motion, palette, login, and denied states are already aligned with the rest of the suite.</p>
+      </div>
+      <span class="pill approved">Shell ready</span>
+    </section>
+
+    <section class="summary-grid" aria-label="Shell checks">
+      <div class="stat">
+        <div class="label">User</div>
+        <div class="value">Signed in</div>
+        <div class="sub">Keep the full-name display path and signed-in chip here.</div>
+      </div>
+      <div class="stat">
+        <div class="label">Licence</div>
+        <div class="value">Active</div>
+        <div class="sub">The suite uses the same licence treatment in every app.</div>
+      </div>
+      <div class="stat">
+        <div class="label">Access</div>
+        <div class="value">Denied state</div>
+        <div class="sub">Use the same no-access card and route back to Platform.</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <div class="panel-title">Starter blocks</div>
+          <div class="panel-sub">Use these placeholders for the real app content</div>
+        </div>
+      </div>
+      <div class="summary-grid">
+        <div class="stat">
+          <div class="label">Primary section</div>
+          <div class="value">Ready</div>
+          <div class="sub">Use this for the main content area in the new app.</div>
+        </div>
+        <div class="stat">
+          <div class="label">List / activity</div>
+          <div class="value">Ready</div>
+          <div class="sub">Good for requests, history, logs, or approvals.</div>
+        </div>
+        <div class="stat">
+          <div class="label">Admin tools</div>
+          <div class="value">Ready</div>
+          <div class="sub">Keep admin-only controls here and keep the suite rhythm.</div>
+        </div>
+      </div>
+      <div class="row">
+        <button type="button" class="btn btn-primary" onclick="togglePaletteModal()">Open palette</button>
+        <button type="button" class="btn btn-ghost" onclick="toggleTheme()">Toggle theme</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="palette-overlay" id="paletteModal" aria-hidden="true">
+  <div class="palette-panel">
+    <div class="palette-head">
+      <div class="palette-title">Choose Colour Scheme</div>
+      <button type="button" class="palette-close btn btn-ghost" onclick="togglePaletteModal(false)">Close</button>
+    </div>
+    <div class="palette-body">
+      <div class="palette-help">This starter keeps the same palette structure as the suite so new apps can feel connected immediately.</div>
+      <div class="palette-grid" id="paletteGrid"></div>
+    </div>
+    <div class="palette-actions">
+      <button type="button" class="btn btn-primary" onclick="setPalette('default')">Use Default</button>
+      <button type="button" class="btn btn-ghost" onclick="togglePaletteModal(false)">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const FALLBACK_LOGO_SRC = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+      <defs>
+        <linearGradient id="g" x1="18" y1="16" x2="102" y2="104" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#2ecc5c"/>
+          <stop offset="100%" stop-color="#1a7a35"/>
+        </linearGradient>
+      </defs>
+      <rect x="12" y="12" width="96" height="96" rx="28" fill="url(#g)"/>
+      <path d="M32 78V42h11l17 20 17-20h11v36H77V59l-17 20-17-20v19H32z" fill="#fff"/>
+    </svg>
+  `);
+
+  const PALETTES = [
+    { id:'default', name:'Default Green', desc:'The core suite look', c1:'#1a7a35', c2:'#22a847', c3:'#2ecc5c' },
+    { id:'ocean', name:'Ocean', desc:'Cooler and calmer', c1:'#13606c', c2:'#1890a0', c3:'#28b7c8' },
+    { id:'sky', name:'Sky', desc:'Brighter and lighter', c1:'#1e5b9a', c2:'#2f7fd0', c3:'#55aaf3' },
+    { id:'violet', name:'Violet', desc:'Soft premium contrast', c1:'#5a3ea5', c2:'#7b56d7', c3:'#9b74e8' },
+    { id:'amber', name:'Amber', desc:'Warm and alert', c1:'#9a5f12', c2:'#c97d10', c3:'#f5a623' },
+    { id:'slate', name:'Slate', desc:'Muted and industrial', c1:'#31485c', c2:'#49657f', c3:'#7188a1' }
+  ];
+
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const $ = sel => document.querySelector(sel);
+
+  function safeStoreGet(key){ try { return localStorage.getItem(key); } catch(e) { return null; } }
+  function safeStoreSet(key, value){ try { localStorage.setItem(key, value); } catch(e) {} }
+
+  async function resolveSuiteLogoSrc() {
+    const cached = safeStoreGet('pw_suite_logo_src');
+    if (cached && cached.startsWith('data:image')) return cached;
+    try {
+      const candidates = ['../index.html', '../holiday-request/index.html', '../credit-hours/index.html', '../kiln-log/index.html'];
+      for (const rel of candidates) {
+        try {
+          const res = await fetch(rel, { cache:'no-store' });
+          if (!res.ok) continue;
+          const html = await res.text();
+          const match = html.match(/<img[^>]+data-suite-logo[^>]+src="([^"]+)"/i)
+            || html.match(/<div class="header-logo">[\s\S]*?<img[^>]+src="([^"]+)"/i)
+            || html.match(/<img[^>]+class="[^"]*header-logo[^"]*"[^>]+src="([^"]+)"/i);
+          if (match && match[1]) {
+            safeStoreSet('pw_suite_logo_src', match[1]);
+            return match[1];
+          }
+        } catch (e) {}
+      }
+    } catch (e) {}
+    return FALLBACK_LOGO_SRC;
+  }
+
+  function applySuiteLogo(src) {
+    $$('[data-suite-logo]').forEach(img => { img.src = src; });
+    safeStoreSet('pw_suite_logo_src', src);
+  }
+
+  function applyTheme(theme) {
+    const light = theme === 'light';
+    document.body.classList.toggle('light-mode', light);
+    safeStoreSet('pw_theme', theme);
+    safeStoreSet('kbl_theme', theme);
+    safeStoreSet('dark', light ? '0' : '1');
+  }
+
+  function readTheme() {
+    const t = safeStoreGet('pw_theme') || safeStoreGet('kbl_theme');
+    if (t === 'light' || t === 'dark') return t;
+    return safeStoreGet('dark') === '0' ? 'light' : 'dark';
+  }
+
+  function setPalette(id) {
+    const picked = PALETTES.find(p => p.id === id) || PALETTES[0];
+    document.documentElement.style.setProperty('--ac', picked.c1);
+    document.documentElement.style.setProperty('--ac2', picked.c2);
+    document.documentElement.style.setProperty('--ac3', picked.c3);
+    document.documentElement.style.setProperty('--acd1', `color-mix(in srgb, ${picked.c1} 10%, transparent)`);
+    document.documentElement.style.setProperty('--acd2', `color-mix(in srgb, ${picked.c1} 18%, transparent)`);
+    document.documentElement.style.setProperty('--acd3', `color-mix(in srgb, ${picked.c1} 28%, transparent)`);
+    document.documentElement.style.setProperty('--palette-card-bg-1', `color-mix(in srgb, ${picked.c3} 24%, transparent)`);
+    document.documentElement.style.setProperty('--palette-card-bg-2', `color-mix(in srgb, ${picked.c1} 12%, transparent)`);
+    document.documentElement.style.setProperty('--palette-card-border', `color-mix(in srgb, ${picked.c3} 22%, transparent)`);
+    document.documentElement.style.setProperty('--palette-card-glow-1', `color-mix(in srgb, ${picked.c3} 18%, transparent)`);
+    document.documentElement.style.setProperty('--palette-card-glow-2', `color-mix(in srgb, ${picked.c3} 10%, transparent)`);
+    document.body.style.setProperty('--ac', picked.c1);
+    document.body.style.setProperty('--ac2', picked.c2);
+    document.body.style.setProperty('--ac3', picked.c3);
+    document.body.style.setProperty('--acd1', `color-mix(in srgb, ${picked.c1} 10%, transparent)`);
+    document.body.style.setProperty('--acd2', `color-mix(in srgb, ${picked.c1} 18%, transparent)`);
+    document.body.style.setProperty('--acd3', `color-mix(in srgb, ${picked.c1} 28%, transparent)`);
+    document.body.style.setProperty('--palette-card-bg-1', `color-mix(in srgb, ${picked.c3} 24%, transparent)`);
+    document.body.style.setProperty('--palette-card-bg-2', `color-mix(in srgb, ${picked.c1} 12%, transparent)`);
+    document.body.style.setProperty('--palette-card-border', `color-mix(in srgb, ${picked.c3} 22%, transparent)`);
+    document.body.style.setProperty('--palette-card-glow-1', `color-mix(in srgb, ${picked.c3} 18%, transparent)`);
+    document.body.style.setProperty('--palette-card-glow-2', `color-mix(in srgb, ${picked.c3} 10%, transparent)`);
+    safeStoreSet('pw_palette_scheme', picked.id);
+    renderPaletteGrid();
+  }
+
+  function renderPaletteGrid() {
+    const current = safeStoreGet('pw_palette_scheme') || 'default';
+    const grid = $('#paletteGrid');
+    if (!grid) return;
+    grid.innerHTML = PALETTES.map(p => `
+      <button type="button" class="palette-option${p.id === current ? ' active' : ''}" data-palette="${p.id}">
+        <div class="palette-sample">
+          <span style="background:${p.c1}"></span>
+          <span style="background:${p.c2}"></span>
+          <span style="background:${p.c3}"></span>
+          <span style="background:var(--sf3)"></span>
+        </div>
+        <div class="palette-meta">
+          <div class="palette-name">${p.name}</div>
+          <div class="palette-desc">${p.desc}</div>
+        </div>
+      </button>
+    `).join('');
+    $$('[data-palette]').forEach(btn => {
+      btn.addEventListener('click', () => setPalette(btn.getAttribute('data-palette')));
+    });
+  }
+
+  function togglePaletteModal(force) {
+    const modal = $('#paletteModal');
+    if (!modal) return;
+    const open = typeof force === 'boolean' ? force : !modal.classList.contains('open');
+    modal.classList.toggle('open', open);
+    modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if (open) renderPaletteGrid();
+  }
+
+  function enterDemo() {
+    const err = $('#starterErr');
+    const email = ($('#starterEmail').value || '').trim();
+    const pass = ($('#starterPass').value || '').trim();
+    if (!email || !pass) {
+      err.style.display = 'block';
+      err.textContent = 'Fill in the starter login fields to preview the app shell.';
+      err.className = 'login-err';
+      return;
+    }
+    $('#loginScreen').style.display = 'none';
+    $('#appShell').style.display = 'block';
+    $('#headerUser').hidden = false;
+    $('#headerEmail').textContent = email;
+    err.style.display = 'none';
+  }
+
+  function backToLogin() {
+    $('#appShell').style.display = 'none';
+    $('#noAccessScreen').style.display = 'none';
+    $('#loginScreen').style.display = 'flex';
+    $('#headerUser').hidden = true;
+  }
+
+  function backToPlatform() {
+    window.location.href = '../index.html';
+  }
+
+  function hideLicenceOverlay() {
+    const overlay = $('#licenceOverlay');
+    if (overlay) overlay.style.display = 'none';
+  }
+
+  function showAccessDenied() {
+    $('#loginScreen').style.display = 'none';
+    $('#appShell').style.display = 'none';
+    $('#noAccessScreen').style.display = 'flex';
+  }
+
+  function toggleTheme() {
+    applyTheme(document.body.classList.contains('light-mode') ? 'dark' : 'light');
+  }
+
+  window.togglePaletteModal = togglePaletteModal;
+  window.setPalette = setPalette;
+  window.toggleTheme = toggleTheme;
+  window.backToLogin = backToLogin;
+  window.backToPlatform = backToPlatform;
+  window.hideLicenceOverlay = hideLicenceOverlay;
+  window.enterDemo = enterDemo;
+  window.showAccessDenied = showAccessDenied;
+
+  (async function init() {
+    const logo = await resolveSuiteLogoSrc();
+    applySuiteLogo(logo);
+    applyTheme(readTheme());
+    setPalette(safeStoreGet('pw_palette_scheme') || 'default');
+    renderPaletteGrid();
+    if (location.search.includes('access=denied')) showAccessDenied();
+  })();
+})();
+</script>
+</body>
+</html>

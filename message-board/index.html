@@ -1,0 +1,2967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111418">
+<title>Padeswood Works · Message Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ff-head:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-body:'Helvetica Neue','Arial Nova',Arial,sans-serif;
+  --ff-mono:'Fira Code',monospace;
+  --ease-smooth:cubic-bezier(.22,1,.36,1);
+  --bg:#000000;
+  --sf:#0d1117;
+  --sf2:#11161d;
+  --sf3:#161c24;
+  --sf4:#1b2230;
+  --bd:#1d2530;
+  --bd2:#273143;
+  --bd3:#344157;
+  --tx:#dde4ee;
+  --tx2:#9aa9be;
+  --tx3:#6f8097;
+  --ac:#1a7a35;
+  --ac2:#2ecc5c;
+  --ac3:#5ee27b;
+  --acd1:rgba(26,122,53,.08);
+  --acd2:rgba(26,122,53,.14);
+  --acd3:rgba(26,122,53,.22);
+  --palette-card-bg-1:rgba(46,204,92,.14);
+  --palette-card-bg-2:rgba(26,122,53,.08);
+  --palette-card-border:rgba(94,226,123,.18);
+  --palette-card-glow-1:rgba(94,226,123,.10);
+  --palette-card-glow-2:rgba(94,226,123,.06);
+  --e1:0 1px 3px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4);
+  --e2:0 4px 18px rgba(0,0,0,.6);
+  --e3:0 20px 56px rgba(0,0,0,.72);
+  --eac:0 4px 22px rgba(51,65,85,.30);
+  --glass-1:rgba(8,11,16,.78);
+  --glass-2:rgba(8,11,16,.68);
+  --glass-3:rgba(8,11,16,.62);
+  --grn:#21c27a; --grnd:rgba(33,194,122,.10);
+  --amb:#f5a623; --amd:rgba(245,166,35,.10);
+  --red:#f0524f; --redd:rgba(240,82,79,.10);
+}
+body.light-mode{
+  --bg:#fbfdff;
+  --sf:#ffffff;
+  --sf2:#f8fbff;
+  --sf3:#f2f7fd;
+  --sf4:#edf3fa;
+  --bd:#dce5f0;
+  --bd2:#cdd8e6;
+  --bd3:#a9bbd3;
+  --tx:#0d1526;
+  --tx2:#405063;
+  --tx3:#74839a;
+  --acd1:rgba(26,122,53,.045);
+  --acd2:rgba(26,122,53,.09);
+  --acd3:rgba(26,122,53,.16);
+  --palette-card-bg-1:rgba(46,204,92,.05);
+  --palette-card-bg-2:rgba(26,122,53,.03);
+  --palette-card-border:rgba(94,226,123,.08);
+  --palette-card-glow-1:rgba(94,226,123,.03);
+  --palette-card-glow-2:rgba(94,226,123,.015);
+  --e1:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.03);
+  --e2:0 4px 18px rgba(0,0,0,.07);
+  --e3:0 20px 56px rgba(0,0,0,.10);
+  --eac:0 4px 14px rgba(51,65,85,.08);
+  --glass-1:rgba(255,255,255,.985);
+  --glass-2:rgba(255,255,255,.93);
+  --glass-3:rgba(255,255,255,.965);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:var(--ff-body);
+  color:var(--tx);
+  background:var(--bg);
+  min-height:100vh;
+  font-size:13.5px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:radial-gradient(circle,var(--palette-card-glow-2) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+  z-index:-1;
+}
+.light-mode{
+  background:
+    radial-gradient(960px 520px at 100% 0%, var(--palette-card-glow-1), transparent 54%),
+    var(--bg);
+}
+.hidden{display:none !important}
+.topbar{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  padding:12px 18px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  border-bottom:1px solid var(--bd);
+  box-shadow:var(--e2), var(--eac);
+  backdrop-filter:blur(20px) saturate(1.08);
+  -webkit-backdrop-filter:blur(20px) saturate(1.08);
+}
+.topbar-left,.topbar-right{display:flex;align-items:center;gap:10px;min-width:0}
+.brand-mark{width:30px;height:30px;border-radius:10px;border:1px solid var(--bd);background:var(--sf2);display:grid;place-items:center;overflow:hidden;flex-shrink:0}
+.brand-mark img{width:100%;height:100%;object-fit:cover}
+.topbar-title{display:flex;flex-direction:column;min-width:0}
+.topbar-title .kicker{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--tx3);font-family:var(--ff-mono)}
+.topbar-title h1{margin:0;font-size:18px;line-height:1.05;font-family:var(--ff-head)}
+.btn,.icon-btn,.input,.textarea{
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+}
+.select{
+  width:100%;
+  min-width:0;
+  height:38px;
+  padding:0 10px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+  font:500 12px/1 var(--ff-head);
+  box-shadow:none;
+}
+.btn{
+  height:38px;padding:0 14px;display:inline-flex;align-items:center;gap:8px;
+  font-weight:700;font-family:var(--ff-head);cursor:pointer;
+}
+.btn-primary{background:linear-gradient(180deg,var(--acd2),var(--acd1));border-color:var(--ac3);color:var(--ac3)}
+.btn-ghost:hover,.icon-btn:hover{border-color:var(--bd3);background:var(--sf3)}
+.icon-btn{width:38px;height:38px;display:grid;place-items:center;cursor:pointer}
+.status-dot{width:10px;height:10px;border-radius:999px;background:var(--grn);box-shadow:0 0 0 4px var(--grnd)}
+.user-chip{
+  max-width:260px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  padding:4px 10px;
+  border:1px solid var(--bd);
+  border-radius:var(--rxs);
+  background:var(--sf2);
+  font:10px/1 var(--ff-mono);
+  color:var(--tx3);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.visually-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  padding:0 !important;
+  margin:-1px !important;
+  overflow:hidden !important;
+  clip:rect(0,0,0,0) !important;
+  white-space:nowrap !important;
+  border:0 !important;
+}
+.page{width:min(1180px,100%);margin:0 auto;padding:20px 16px 32px;display:grid;gap:14px}
+.panel{
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e2),var(--eac);
+  padding:16px;
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+}
+.suite-section{
+  position:relative;
+  border:1px solid var(--bd);
+  border-radius:18px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e2),var(--eac);
+  overflow:visible;
+}
+.suite-section + .suite-section{
+  margin-top:18px;
+}
+.suite-section + .suite-section::before{
+  content:'';
+  position:absolute;
+  left:18px;
+  right:18px;
+  top:-10px;
+  height:2px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  z-index:2;
+  pointer-events:none;
+}
+.suite-section > summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:16px;
+  position:relative;
+}
+.suite-section > summary::-webkit-details-marker{display:none}
+.suite-section > summary::after{
+  content:'';
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  pointer-events:none;
+}
+.suite-section-head{
+  display:flex;
+  align-items:flex-start;
+  gap:12px;
+  min-width:0;
+}
+.suite-section-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.suite-section-body{
+  padding:0 16px 16px;
+}
+.suite-section-arrow{
+  width:10px;
+  height:10px;
+  flex:0 0 10px;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease,border-color .2s ease;
+  margin-left:auto;
+}
+.suite-section[open] .suite-section-arrow{
+  transform:rotate(225deg);
+  border-color:var(--ac3);
+}
+.panel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.panel-title{font-family:var(--ff-head);font-size:18px;font-weight:800}
+.panel-sub{font-size:12px;color:var(--tx2)}
+.composer-grid{display:grid;gap:10px}
+.compose-mode-toggle{display:flex;gap:8px;flex-wrap:wrap}
+.mode-btn{height:34px;padding:0 12px;border-radius:10px;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx2);font:700 12px/1 var(--ff-head);cursor:pointer}
+.mode-btn.active{border-color:var(--ac3);color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
+.thread-controls{display:grid;grid-template-columns:180px 1fr;gap:8px}
+.thread-controls .input,.thread-controls .select{height:38px;padding:0 10px}
+.thread-controls .select{
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+  font:500 12px/1 var(--ff-head);
+}
+.textarea{width:100%;min-height:110px;padding:12px;font:500 14px/1.5 var(--ff-body);resize:vertical;outline:none}
+.textarea:focus,.input:focus,.select:focus{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
+.handwrite-wrap{display:grid;gap:8px}
+.handwrite-pad{
+  width:100%;
+  min-height:360px;
+  height:360px;
+  border-radius:12px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  touch-action:none;
+  cursor:crosshair;
+}
+.handwrite-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.composer-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.composer-actions-inline{justify-content:flex-end}
+.small{font-size:11px;color:var(--tx3)}
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.note{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:12px;
+  display:grid;
+  gap:8px;
+  min-height:140px;
+  box-shadow:var(--e1),var(--eac);
+}
+.note-meta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pill{
+  font:600 10px/1 var(--ff-mono);
+  letter-spacing:.08em;text-transform:uppercase;
+  border-radius:999px;padding:4px 8px;border:1px solid var(--bd2);color:var(--tx2);background:var(--sf3)
+}
+.pill.warn{color:var(--amb);border-color:rgba(245,158,11,.28);background:var(--amd)}
+.pill.bad{color:var(--red);border-color:rgba(239,68,68,.28);background:var(--redd)}
+.note-text{white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.45;color:var(--tx)}
+.note-drawing{
+  width:100%;
+  border-radius:10px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  display:block;
+  transition:filter .28s var(--ease-smooth), opacity .28s var(--ease-smooth);
+}
+.thread-list{display:grid;gap:10px}
+.thread-group{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1),var(--eac);
+  overflow:hidden;
+}
+.thread-group summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--bd);
+}
+.thread-group summary::-webkit-details-marker{display:none}
+.thread-group-title{display:grid;gap:3px;min-width:0}
+.thread-group-header{display:flex;align-items:center;gap:10px;min-width:0}
+.thread-group-name{
+  font-family:var(--ff-head);
+  font-size:14px;
+  font-weight:800;
+  line-height:1.2;
+  color:var(--tx);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.thread-group-sub{font-size:11px;color:var(--tx3)}
+.thread-group-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.thread-reply-btn{
+  height:28px;
+  padding:0 10px;
+  border-radius:9px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  font:700 11px/1 var(--ff-head);
+  cursor:pointer;
+}
+.thread-reply-btn:hover{
+  border-color:var(--ac3);
+  color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.thread-group-arrow{
+  width:9px;height:9px;flex:0 0 9px;
+  border-right:2px solid var(--tx3);
+  border-bottom:2px solid var(--tx3);
+  transform:rotate(45deg);
+  transition:transform .2s ease,border-color .2s ease;
+}
+.thread-group[open] .thread-group-arrow{
+  transform:rotate(225deg);
+  border-color:var(--ac3);
+}
+.thread-group-body{display:grid;gap:8px;padding:10px}
+.note-own-actions{display:flex;justify-content:flex-end}
+.note-delete{
+  height:24px;
+  padding:0 8px;
+  border-radius:8px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 10px/1 var(--ff-head);
+  cursor:pointer;
+}
+.private-toggle-btn{
+  position:relative;
+  min-width:136px;
+}
+.private-toggle-btn.unread{
+  border-color:color-mix(in srgb, var(--ac3) 70%, var(--bd2));
+  box-shadow:0 0 0 1px var(--acd2),0 0 14px color-mix(in srgb, var(--ac3) 38%, transparent);
+  animation:privateToggleGlow 1.5s ease-in-out infinite;
+}
+.private-toggle-btn.active{
+  border-color:var(--ac3);
+  color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.pm-unread-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:18px;
+  height:18px;
+  padding:0 6px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb, var(--ac3) 70%, var(--bd2));
+  background:color-mix(in srgb, var(--acd2) 70%, var(--sf2));
+  color:var(--ac3);
+  font:700 10px/1 var(--ff-mono);
+}
+@keyframes privateToggleGlow{
+  0%,100%{
+    box-shadow:0 0 0 1px var(--acd2),0 0 14px color-mix(in srgb, var(--ac3) 34%, transparent);
+  }
+  50%{
+    box-shadow:0 0 0 1px var(--acd3),0 0 22px color-mix(in srgb, var(--ac3) 48%, transparent);
+  }
+}
+.pm-shell{
+  display:grid;
+  grid-template-columns:minmax(240px,280px) minmax(0,1fr);
+  gap:12px;
+}
+.pm-side{
+  display:grid;
+  gap:10px;
+}
+.pm-start{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  padding:10px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  display:grid;
+  gap:8px;
+}
+.pm-start .select{
+  width:100%;
+  min-width:0;
+  height:38px;
+  padding:0 10px;
+  border:1px solid var(--bd2);
+  background:var(--sf2);
+  color:var(--tx);
+  border-radius:11px;
+  font:500 12px/1 var(--ff-head);
+  box-shadow:none;
+}
+.pm-thread-list{
+  display:grid;
+  gap:8px;
+}
+.pm-thread-item{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:10px;
+  display:grid;
+  gap:5px;
+  cursor:pointer;
+  text-align:left;
+}
+.pm-thread-item:hover{
+  border-color:var(--bd3);
+  background:var(--sf2);
+}
+.pm-thread-item.active{
+  border-color:var(--ac3);
+  box-shadow:0 0 0 3px var(--acd1);
+}
+.pm-thread-item.unread{
+  border-color:color-mix(in srgb, var(--ac3) 68%, var(--bd2));
+}
+.pm-thread-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.pm-thread-name{
+  font:800 13px/1.2 var(--ff-head);
+  color:var(--tx);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.pm-thread-preview{
+  font-size:12px;
+  color:var(--tx2);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.pm-thread-meta{
+  font-size:10px;
+  color:var(--tx3);
+  font-family:var(--ff-mono);
+}
+.pm-main{
+  border:1px solid var(--bd);
+  border-radius:14px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  padding:12px;
+  display:grid;
+  gap:10px;
+}
+.pm-main-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.pm-main-title{
+  font:800 16px/1.2 var(--ff-head);
+  margin:0;
+}
+.pm-main-sub{
+  margin:3px 0 0;
+  font-size:11px;
+  color:var(--tx2);
+}
+.pm-timer-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pm-timer-controls .select{
+  min-width:160px;
+  height:38px;
+  padding:0 10px;
+}
+.pm-timer-controls .btn{
+  height:34px;
+  padding:0 10px;
+}
+.pm-thread-delete{
+  height:34px;
+  padding:0 10px;
+  border-radius:10px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 12px/1 var(--ff-head);
+  cursor:pointer;
+}
+.pm-thread-delete:hover{
+  border-color:color-mix(in srgb, var(--red) 55%, var(--redb));
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--red) 16%, transparent);
+}
+.pm-message-list{
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--sf2);
+  padding:10px;
+  display:grid;
+  gap:8px;
+  min-height:160px;
+  max-height:380px;
+  overflow:auto;
+}
+.pm-message{
+  max-width:min(82%, 560px);
+  border:1px solid var(--bd2);
+  border-radius:12px;
+  padding:9px 10px 8px;
+  background:linear-gradient(180deg,var(--glass-1),var(--glass-2));
+  box-shadow:var(--e1);
+  display:grid;
+  gap:5px;
+}
+.pm-message.outgoing{
+  margin-left:auto;
+  border-color:color-mix(in srgb, var(--ac3) 58%, var(--bd2));
+  background:linear-gradient(180deg,color-mix(in srgb, var(--acd2) 48%, var(--glass-1)),color-mix(in srgb, var(--acd1) 38%, var(--glass-2)));
+}
+.pm-message-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.pm-message-author{
+  font:700 11px/1 var(--ff-mono);
+  color:var(--tx2);
+}
+.pm-message-time{
+  font:600 10px/1 var(--ff-mono);
+  color:var(--tx3);
+}
+.pm-message-text{
+  white-space:pre-wrap;
+  word-break:break-word;
+  font-size:13px;
+  color:var(--tx);
+}
+.pm-message-expiry{
+  font-size:10px;
+  font-family:var(--ff-mono);
+  color:var(--tx3);
+}
+.pm-message-actions{
+  display:flex;
+  justify-content:flex-end;
+}
+.pm-message-delete{
+  height:22px;
+  padding:0 8px;
+  border-radius:7px;
+  border:1px solid var(--redb);
+  background:var(--redd);
+  color:var(--red);
+  font:700 10px/1 var(--ff-head);
+  cursor:pointer;
+}
+.pm-compose{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+}
+.pm-compose .input{
+  height:38px;
+  padding:0 12px;
+}
+.pm-compose .btn{
+  height:38px;
+  padding:0 14px;
+}
+.empty{padding:20px;border:1px dashed var(--bd2);border-radius:14px;color:var(--tx3);text-align:center}
+.toast{
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:var(--sf);border:1px solid var(--bd2);box-shadow:var(--e2);
+  border-radius:12px;padding:10px 14px;display:none;z-index:90;font-size:13px
+}
+.auth-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
+.auth-card{width:min(460px,100%);padding:20px}
+.auth-title{font:800 26px/1.1 var(--ff-head);margin:0 0 8px}
+.auth-sub{margin:0 0 14px;color:var(--tx2)}
+.row{display:grid;gap:8px}
+#accessDenied .row{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  align-items:center;
+}
+#accessDenied .btn{
+  width:auto;
+}
+.palette-overlay{position:fixed;inset:0;background:rgba(7,12,18,.56);display:none;align-items:center;justify-content:center;padding:16px;z-index:80}
+.palette-overlay.open{display:flex}
+.palette-panel{width:min(560px,96vw);max-height:min(86vh,720px);overflow:auto;padding:16px}
+.palette-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.palette-option{display:flex;align-items:center;gap:10px;text-align:left;padding:10px;border-radius:12px;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx);cursor:pointer}
+.palette-option.active{border-color:var(--ac3);box-shadow:0 0 0 3px var(--acd1)}
+.palette-sample{width:46px;height:46px;border-radius:12px;border:1px solid var(--bd2);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;overflow:hidden}
+.palette-meta{display:grid;gap:2px}
+.palette-name{font:700 13px/1.2 var(--ff-head);color:var(--tx)}
+.palette-desc{font-size:11px;color:color-mix(in srgb,var(--tx) 72%, var(--tx2))}
+.access-wrap{max-width:min(760px,94vw);margin:40px auto;padding:16px}
+.suite-divider{
+  position:relative;
+  height:1px;
+  margin:18px 2px 2px;
+  overflow:hidden;
+  pointer-events:none;
+}
+.suite-divider::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,var(--ac3),transparent);
+  background-size:200% 100%;
+  animation:lineFlow 8s ease-in-out infinite;
+  opacity:.35;
+  will-change:background-position;
+}
+@keyframes lineFlow{
+  0%,100%{background-position:0% 50%;opacity:.62}
+  50%{background-position:100% 50%;opacity:1}
+}
+body.basic-mode *{animation:none !important;transition:none !important}
+body.basic-mode,
+body.basic-mode::before,
+body.basic-mode::after{
+  background-image:none !important;
+}
+@media (max-width:760px){
+  .topbar{padding:10px 12px;gap:8px}
+  .topbar-left{flex:1 1 auto;min-width:0}
+  .topbar-right{flex:1 1 100%;margin-left:auto;justify-content:flex-end}
+  .user-chip{max-width:180px}
+  .topbar-title h1{font-size:16px}
+  .topbar-title .kicker{font-size:9px}
+  .thread-controls{grid-template-columns:1fr}
+  .pm-shell{grid-template-columns:1fr}
+  .pm-message{max-width:100%}
+  .pm-compose{grid-template-columns:1fr}
+  .page{padding:12px 10px 20px;gap:12px}
+  .panel{padding:14px}
+  .suite-section > summary{padding:14px}
+  .suite-section-body{padding:0 14px 14px}
+  .panel-title{font-size:16px}
+  .panel-sub{font-size:11px}
+  .thread-group summary{padding:10px 12px}
+  .handwrite-pad{min-height:180px;height:180px}
+  .palette-grid{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .topbar-title .kicker{display:none}
+  .topbar-title h1{font-size:15px}
+  .user-chip{max-width:140px}
+}
+</style>
+</head>
+<body class="hidden">
+<div id="loginScreen" class="auth-screen hidden">
+  <div class="panel auth-card">
+    <h1 class="auth-title">Message Board</h1>
+    <p class="auth-sub">Anonymous notes to the team. Posts automatically clear after 24 hours.</p>
+    <div class="row">
+      <input id="loginEmail" class="input" type="email" autocomplete="email" placeholder="name@heidelbergmaterials.com" style="height:42px;padding:0 12px">
+      <input id="loginPass" class="input" type="password" autocomplete="current-password" placeholder="Password" style="height:42px;padding:0 12px">
+      <button class="btn btn-primary" onclick="doLogin()">Sign in</button>
+    </div>
+  </div>
+</div>
+
+<div id="accessDenied" class="hidden">
+  <div class="panel auth-card" style="width:min(560px,100%);margin:40px auto;padding:20px">
+    <div class="brand-row" style="display:flex;align-items:center;gap:12px">
+      <div class="brand-mark logo-mark lg" aria-hidden="true"><img data-suite-logo alt="Padeswood Works"></div>
+      <div>
+        <h1 class="auth-title" style="margin:0">No Access</h1>
+        <div class="auth-sub" style="margin:4px 0 0">You do not have access to Message Board.</div>
+      </div>
+    </div>
+    <div class="small" style="margin-top:14px">Please contact an administrator if you think this is wrong.</div>
+    <div class="row" style="margin-top:14px">
+      <button class="btn btn-primary" type="button" onclick="goBackToPlatform()">Back to Platform</button>
+    </div>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="icon-btn" title="Back to Platform" aria-label="Back to Platform" onclick="goBackToPlatform()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="brand-mark"><img data-suite-logo alt="Padeswood Works"></div>
+      <div class="topbar-title">
+        <div class="kicker">HeidelbergMaterials · Message Board</div>
+        <h1>Padeswood Works</h1>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="status-dot" aria-hidden="true" title="Database connected"></span>
+      <span id="syncLabel" class="small visually-hidden" aria-live="polite">Database connected</span>
+      <span class="user-chip" id="userChip">—</span>
+      <button class="btn btn-ghost private-toggle-btn" id="privateToggleBtn" type="button" onclick="togglePrivatePanel()">
+        Private messages
+        <span id="privateUnreadBadge" class="pm-unread-badge hidden">0</span>
+      </button>
+      <button class="icon-btn" title="Theme" aria-label="Theme" onclick="toggleTheme()">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"></svg>
+      </button>
+      <button class="icon-btn" id="paletteBtn" title="Choose colour scheme" aria-label="Choose colour scheme" onclick="openPaletteModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M12 3c-5 0-9 3.6-9 8.1 0 3 2.2 5.5 5.1 5.5h2c1.1 0 2 .9 2 2v.3c0 1.1.9 2 2 2 3.9 0 7-3.2 7-7.2C21 7.8 17 3 12 3z"/><circle cx="7" cy="11" r="1"/><circle cx="10" cy="8.5" r="1"/><circle cx="14.5" cy="8.2" r="1"/><circle cx="17" cy="11.6" r="1"/></svg>
+      </button>
+      <button class="icon-btn" title="Sign out" aria-label="Sign out" onclick="doLogout()" style="color:var(--red)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="page">
+    <details id="privatePanel" class="suite-section hidden">
+      <summary>
+        <div class="suite-section-head">
+          <div class="brand-mark logo-mark" aria-hidden="true"><img data-suite-logo alt=""></div>
+          <div class="suite-section-copy">
+            <div class="panel-title">Private Messages</div>
+            <div class="panel-sub">Direct 1-to-1 conversations. Not anonymous.</div>
+          </div>
+        </div>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div class="pm-shell">
+          <aside class="pm-side">
+            <div class="pm-start">
+              <div class="small">Start or open a chat</div>
+              <select id="pmRecipientSelect" class="select">
+                <option value="">Select person...</option>
+              </select>
+              <button id="pmOpenChatBtn" class="btn btn-primary" type="button" onclick="openPrivateThreadFromSelection()">Open chat</button>
+            </div>
+            <div id="pmThreadList" class="pm-thread-list">
+              <div class="empty">No private conversations yet.</div>
+            </div>
+          </aside>
+          <div class="pm-main">
+            <div id="pmConversationEmpty" class="empty">Choose a person or open a conversation to start private messaging.</div>
+            <div id="pmConversationWrap" class="hidden">
+              <div class="pm-main-head">
+                <div>
+                  <h3 id="pmConversationTitle" class="pm-main-title">Private chat</h3>
+                  <p id="pmConversationSub" class="pm-main-sub">Direct message thread.</p>
+                </div>
+                <div class="pm-timer-controls">
+                  <select id="pmAutoDeleteSelect" class="select">
+                    <option value="off">Auto-remove off</option>
+                    <option value="60">1 minute</option>
+                    <option value="300">5 minutes</option>
+                    <option value="900">15 minutes</option>
+                    <option value="3600">1 hour</option>
+                    <option value="21600">6 hours</option>
+                    <option value="43200">12 hours</option>
+                    <option value="86400">1 day</option>
+                    <option value="259200">3 days</option>
+                    <option value="604800">1 week</option>
+                  </select>
+                  <button class="btn btn-ghost" type="button" onclick="savePmTimer()">Apply timer</button>
+                  <button class="pm-thread-delete" type="button" onclick="deletePrivateConversation()">Delete convo</button>
+                </div>
+              </div>
+              <div id="pmMessageList" class="pm-message-list"></div>
+              <div class="pm-compose">
+                <input id="pmMessageInput" class="input" type="text" maxlength="2000" placeholder="Write a private message..." onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();sendPrivateMessage();}">
+                <button class="btn btn-primary" type="button" onclick="sendPrivateMessage()">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="suite-section" open>
+      <summary>
+        <div class="suite-section-head">
+          <div class="suite-section-copy">
+            <div class="panel-title">Anonymous Whiteboard</div>
+            <div class="panel-sub">Anything posted here is anonymous and automatically removed 24 hours after posting.</div>
+          </div>
+        </div>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div class="composer-grid">
+          <div class="compose-mode-toggle">
+            <button id="modeTypeBtn" class="mode-btn active" type="button" onclick="setComposeMode('type')">Type</button>
+            <button id="modeHandBtn" class="mode-btn" type="button" onclick="setComposeMode('hand')">Draw</button>
+          </div>
+          <div class="thread-controls">
+            <select id="postKind" class="select" onchange="onPostKindChange()">
+              <option value="topic">New topic</option>
+              <option value="reply">Reply to topic</option>
+            </select>
+            <input id="topicTitleInput" class="input" type="text" maxlength="120" placeholder="Topic title (required for new topic)">
+            <select id="replyTopicSelect" class="select hidden">
+              <option value="">Select topic...</option>
+            </select>
+          </div>
+          <textarea id="messageInput" class="textarea" maxlength="2000" placeholder="Write an anonymous message..."></textarea>
+          <div class="composer-actions composer-actions-inline">
+            <button id="postBtnInline" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
+          </div>
+          <div id="handwriteWrap" class="handwrite-wrap hidden">
+            <canvas id="handwritePad" class="handwrite-pad" aria-label="Handwriting pad"></canvas>
+            <div class="handwrite-actions">
+              <button class="btn btn-ghost" type="button" onclick="clearHandwritePad()">Clear</button>
+            </div>
+            <div class="small">Draw with your finger or stylus. You can also add optional typed text above as a caption.</div>
+          </div>
+          <div class="composer-actions">
+            <div id="composerMeta" class="small">
+              <span id="typeMeta"><span id="charCount">0</span>/2000 characters</span>
+              <span id="handMeta" class="hidden">Add optional caption above, then post your handwritten note.</span>
+            </div>
+            <button id="postBtn" class="btn btn-primary" onclick="submitMessage()">Post anonymously</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details class="suite-section" open>
+      <summary>
+        <div class="suite-section-head">
+          <div class="suite-section-copy">
+            <div class="panel-title">Live Board</div>
+            <div class="panel-sub">Showing messages from the last 24 hours.</div>
+          </div>
+        </div>
+        <span class="suite-section-arrow" aria-hidden="true"></span>
+      </summary>
+      <div class="suite-section-body">
+        <div id="boardList" class="thread-list"></div>
+      </div>
+    </details>
+  </main>
+</div>
+
+<div id="paletteModal" class="palette-overlay" onclick="if(event.target===this)closePaletteModal()">
+  <div class="panel palette-panel">
+    <div class="panel-head">
+      <div class="panel-title">Colour Scheme</div>
+      <button class="btn btn-ghost" type="button" onclick="closePaletteModal()">Close</button>
+    </div>
+    <div class="palette-grid" id="paletteGrid">
+      <button type="button" class="palette-option" data-palette="basic" onclick="setPalettePreset('basic')"><span class="palette-sample"><span style="background:#2f343c"></span><span style="background:#49515a"></span><span style="background:#6b7280"></span><span style="background:#d1d5db"></span></span><span class="palette-meta"><span class="palette-name">Basic</span><span class="palette-desc">Flat grayscale view.</span></span></button>
+      <button type="button" class="palette-option" data-palette="default" onclick="setPalettePreset('default')"><span class="palette-sample"><span style="background:#1a7a35"></span><span style="background:#2ecc5c"></span><span style="background:#5ee27b"></span><span style="background:#0b4f24"></span></span><span class="palette-meta"><span class="palette-name">Green</span><span class="palette-desc">Original suite palette.</span></span></button>
+      <button type="button" class="palette-option" data-palette="ocean" onclick="setPalettePreset('ocean')"><span class="palette-sample"><span style="background:#0f766e"></span><span style="background:#14b8a6"></span><span style="background:#2dd4bf"></span><span style="background:#0b4f4a"></span></span><span class="palette-meta"><span class="palette-name">Ocean</span><span class="palette-desc">Cool teal tones.</span></span></button>
+      <button type="button" class="palette-option" data-palette="sky" onclick="setPalettePreset('sky')"><span class="palette-sample"><span style="background:#2563eb"></span><span style="background:#3b82f6"></span><span style="background:#60a5fa"></span><span style="background:#1e40af"></span></span><span class="palette-meta"><span class="palette-name">Sky</span><span class="palette-desc">Brighter blue accents.</span></span></button>
+      <button type="button" class="palette-option" data-palette="violet" onclick="setPalettePreset('violet')"><span class="palette-sample"><span style="background:#6d28d9"></span><span style="background:#8b5cf6"></span><span style="background:#a78bfa"></span><span style="background:#4c1d95"></span></span><span class="palette-meta"><span class="palette-name">Violet</span><span class="palette-desc">Premium purple accent.</span></span></button>
+      <button type="button" class="palette-option" data-palette="amber" onclick="setPalettePreset('amber')"><span class="palette-sample"><span style="background:#b45309"></span><span style="background:#d97706"></span><span style="background:#f59e0b"></span><span style="background:#92400e"></span></span><span class="palette-meta"><span class="palette-name">Amber</span><span class="palette-desc">Warm industrial tones.</span></span></button>
+      <button type="button" class="palette-option" data-palette="slate" onclick="setPalettePreset('slate')"><span class="palette-sample"><span style="background:#334155"></span><span style="background:#475569"></span><span style="background:#64748b"></span><span style="background:#0f172a"></span></span><span class="palette-meta"><span class="palette-name">Graphite</span><span class="palette-desc">Darker neutral scheme.</span></span></button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../shared-suite.js"></script>
+<script>
+const SUPABASE_URL = 'https://xnkwrkoxvgptobnmekgv.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhua3dya294dmdwdG9ibm1la2d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjAxNTQsImV4cCI6MjA4ODIzNjE1NH0.PrmnJ4eGepac41bQuNPG7TcBaunrfTWdjLtkGLr_2LY';
+const MESSAGE_TABLE = 'pw_message_board_posts';
+const PM_THREAD_TABLE = 'pw_message_board_private_threads';
+const PM_MESSAGE_TABLE = 'pw_message_board_private_messages';
+const PM_READ_TABLE = 'pw_message_board_private_reads';
+const ACCESS_DENIED_LAUNCH = new URLSearchParams(window.location.search).get('access') === 'denied';
+const SUITE_LOGO_FALLBACK_SRC = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96"><rect x="8" y="8" width="80" height="80" rx="22" fill="#1a7a35"/><rect x="16" y="16" width="64" height="64" rx="16" fill="rgba(255,255,255,.14)"/></svg>');
+
+const suiteShared = window.PadeswoodSuite;
+const sharedPalette = suiteShared && suiteShared.palette ? suiteShared.palette : null;
+const PALETTE_STORAGE_KEY = (sharedPalette && sharedPalette.STORAGE_KEY) || 'pw_palette_scheme';
+const PALETTE_VARS = (sharedPalette && Array.isArray(sharedPalette.DEFAULT_VARS))
+  ? sharedPalette.DEFAULT_VARS.slice()
+  : ['--ac','--ac2','--ac3','--acd1','--acd2','--acd3','--palette-card-bg-1','--palette-card-bg-2','--palette-card-border','--palette-card-glow-1','--palette-card-glow-2','--eac'];
+const PALETTE_PRESETS = (sharedPalette && sharedPalette.getPresetVarsMap)
+  ? sharedPalette.getPresetVarsMap({ includeDescriptions: true })
+  : { default: { label: 'Default Green', vars: {} }, basic: { label: 'Basic', vars: {} } };
+const PALETTE_META_MAP = (sharedPalette && sharedPalette.getPresetMap) ? sharedPalette.getPresetMap() : {};
+
+let sb = null;
+let currentUser = null;
+let currentProfile = null;
+let refreshTimer = null;
+let composeMode = 'type';
+let handCanvas = null;
+let handCtx = null;
+let handDrawing = false;
+let handDirty = false;
+let latestBoardRows = [];
+let privateProfiles = [];
+let privateThreads = [];
+let privateMessages = [];
+let privateReadByThread = {};
+let privateCurrentThreadId = '';
+let privateAdminUserIds = new Set();
+let privateMessagingReady = true;
+let privateMessagingWarned = false;
+let privateCountdownTimer = null;
+let privateCountdownRefreshBusy = false;
+let privateExpiryCleanupAtMs = 0;
+const MESSAGE_BOARD_SEEN_AT_KEY_PREFIX = 'pw_message_board_seen_at:';
+const ANON_MESSAGE_PLACEHOLDER_DEFAULT = 'Write an anonymous message...';
+const ANON_MESSAGE_PLACEHOLDER_WORDS = [];
+const ANON_MESSAGE_PLACEHOLDER_TYPE_MS = 5000;
+const ANON_MESSAGE_PLACEHOLDER_HOLD_MS = 2000;
+const ANON_MESSAGE_PLACEHOLDER_DELETE_MS = 3000;
+const ANON_MESSAGE_PLACEHOLDER_IDLE_MS = 600;
+const HAND_AUTO_DOODLE_DRAW_MS = 5000;
+const HAND_AUTO_DOODLE_HOLD_MS = 5000;
+const HAND_AUTO_DOODLE_GAP_MS = 420;
+let anonPlaceholderLoopActive = false;
+let anonPlaceholderLoopToken = 0;
+let anonPlaceholderLastWord = '';
+let handAutoDoodleActive = false;
+let handAutoDoodleToken = 0;
+let handAutoDoodleLastName = '';
+let handUserInteracted = false;
+let userTypedSinceComposeClear = false;
+let userDrewSinceComposeClear = false;
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function setToast(msg){
+  const el = $('toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  clearTimeout(window.__msgBoardToast);
+  window.__msgBoardToast = setTimeout(() => { el.style.display = 'none'; }, 2400);
+}
+
+function formatAge(createdAt){
+  const ms = Date.now() - new Date(createdAt).getTime();
+  const mins = Math.max(0, Math.floor(ms / 60000));
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  const rem = mins % 60;
+  return hrs + 'h ' + rem + 'm ago';
+}
+
+function formatExpiry(expiresAt){
+  const ms = new Date(expiresAt).getTime() - Date.now();
+  if (ms <= 0) return 'expired';
+  const mins = Math.floor(ms / 60000);
+  const hrs = Math.floor(mins / 60);
+  const rem = mins % 60;
+  if (hrs <= 0) return rem + 'm left';
+  return hrs + 'h ' + rem + 'm left';
+}
+
+function formatLiveCountdown(ms){
+  if (!Number.isFinite(ms)) return '';
+  if (ms <= 0) return 'expired';
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+  if (days > 0) return days + 'd ' + hours + 'h left';
+  if (hours > 0) return hours + 'h ' + mins + 'm left';
+  if (mins > 0) return mins + 'm ' + secs + 's left';
+  return secs + 's left';
+}
+
+function getBoardTheme(){
+  return document.body.classList.contains('light-mode') ? 'light' : 'dark';
+}
+
+function messageBoardSeenAtKey(){
+  const profileId = currentProfile && currentProfile.id ? String(currentProfile.id) : '';
+  return profileId ? (MESSAGE_BOARD_SEEN_AT_KEY_PREFIX + profileId) : '';
+}
+
+function markMessageBoardSeen(ts){
+  const key = messageBoardSeenAtKey();
+  if (!key) return;
+  try { localStorage.setItem(key, String(ts || new Date().toISOString())); } catch (e) {}
+}
+
+function privateMessageSchemaError(err){
+  const msg = String(err && (err.message || err.details || err.hint || err.code || err) || '').toLowerCase();
+  return /schema cache|does not exist|relation .* does not exist|function .* does not exist|column .* does not exist/i.test(msg);
+}
+
+function normalizePmTimerSeconds(value){
+  if (value == null || value === '' || value === 'off') return null;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return null;
+  const int = Math.floor(n);
+  if (int < 60) return 60;
+  if (int > 604800) return 604800;
+  return int;
+}
+
+function privateTimerLabel(seconds){
+  if (!seconds || !Number.isFinite(Number(seconds))) return 'Auto-remove off';
+  const v = Number(seconds);
+  if (v === 60) return 'Auto-remove: 1 minute';
+  if (v < 3600) return 'Auto-remove: ' + Math.floor(v / 60) + ' minutes';
+  if (v < 86400) return 'Auto-remove: ' + Math.floor(v / 3600) + ' hour' + (Math.floor(v / 3600) === 1 ? '' : 's');
+  if (v < 604800) return 'Auto-remove: ' + Math.floor(v / 86400) + ' day' + (Math.floor(v / 86400) === 1 ? '' : 's');
+  return 'Auto-remove: 1 week';
+}
+
+function nextFrame(){
+  return new Promise(function(resolve){ requestAnimationFrame(resolve); });
+}
+
+function canRunHandAutoDoodle(){
+  return composeMode === 'hand'
+    && !!handCanvas
+    && !!handCtx
+    && !handDrawing
+    && !handDirty
+    && !handUserInteracted;
+}
+
+function getRandomHandAutoDoodle(){
+  const doodles = [
+    {
+      name: 'middle-finger',
+      lineWidth: 3.2,
+      strokes: [
+        [[0.26,0.72],[0.32,0.62],[0.44,0.60],[0.56,0.62],[0.64,0.72]],
+        [[0.34,0.62],[0.32,0.52],[0.36,0.44],[0.41,0.46],[0.42,0.60]],
+        [[0.43,0.60],[0.43,0.28],[0.47,0.22],[0.52,0.27],[0.52,0.60]],
+        [[0.53,0.60],[0.55,0.46],[0.60,0.44],[0.64,0.52],[0.62,0.62]],
+        [[0.47,0.74],[0.51,0.72],[0.54,0.68],[0.53,0.64],[0.48,0.64],[0.45,0.68],[0.46,0.72],[0.47,0.74]]
+      ]
+    },
+    {
+      name: 'cock-and-balls',
+      lineWidth: 3.1,
+      strokes: [
+        [[0.32,0.70],[0.34,0.62],[0.42,0.58],[0.48,0.62],[0.48,0.80],[0.42,0.86],[0.34,0.83],[0.30,0.76],[0.32,0.70]],
+        [[0.68,0.70],[0.70,0.62],[0.78,0.58],[0.84,0.62],[0.84,0.80],[0.78,0.86],[0.70,0.83],[0.66,0.76],[0.68,0.70]],
+        [[0.48,0.78],[0.48,0.36],[0.52,0.28],[0.62,0.28],[0.68,0.36],[0.68,0.78]],
+        [[0.48,0.36],[0.52,0.22],[0.62,0.20],[0.68,0.36]],
+        [[0.56,0.20],[0.58,0.14],[0.62,0.12],[0.66,0.14],[0.68,0.20]]
+      ]
+    },
+    {
+      name: 'arse',
+      lineWidth: 3.0,
+      strokes: [
+        [[0.38,0.78],[0.34,0.70],[0.34,0.58],[0.38,0.46],[0.46,0.40],[0.52,0.42],[0.50,0.52],[0.48,0.64],[0.46,0.76]],
+        [[0.62,0.78],[0.66,0.70],[0.66,0.58],[0.62,0.46],[0.54,0.40],[0.48,0.42],[0.50,0.52],[0.52,0.64],[0.54,0.76]],
+        [[0.50,0.42],[0.50,0.84]],
+        [[0.49,0.62],[0.46,0.66],[0.49,0.70],[0.52,0.66],[0.49,0.62]]
+      ]
+    },
+    {
+      name: 'double-birds',
+      lineWidth: 2.9,
+      strokes: [
+        [[0.12,0.72],[0.18,0.64],[0.26,0.62],[0.34,0.64],[0.38,0.72]],
+        [[0.20,0.64],[0.18,0.53],[0.21,0.45],[0.26,0.45],[0.28,0.64]],
+        [[0.29,0.64],[0.29,0.34],[0.33,0.28],[0.37,0.33],[0.37,0.64]],
+        [[0.62,0.72],[0.68,0.64],[0.76,0.62],[0.84,0.64],[0.88,0.72]],
+        [[0.70,0.64],[0.68,0.53],[0.71,0.45],[0.76,0.45],[0.78,0.64]],
+        [[0.79,0.64],[0.79,0.34],[0.83,0.28],[0.87,0.33],[0.87,0.64]]
+      ]
+    },
+    {
+      name: 'poo-emoji',
+      lineWidth: 3.0,
+      strokes: [
+        [[0.50,0.24],[0.56,0.20],[0.61,0.25],[0.59,0.31],[0.53,0.33],[0.48,0.30],[0.50,0.24]],
+        [[0.40,0.39],[0.48,0.33],[0.60,0.34],[0.68,0.41],[0.66,0.49],[0.58,0.54],[0.45,0.54],[0.37,0.48],[0.40,0.39]],
+        [[0.31,0.60],[0.41,0.53],[0.59,0.54],[0.70,0.60],[0.68,0.73],[0.56,0.81],[0.42,0.81],[0.30,0.72],[0.31,0.60]],
+        [[0.445,0.61],[0.455,0.61]],
+        [[0.555,0.61],[0.565,0.61]],
+        [[0.44,0.70],[0.50,0.75],[0.58,0.70]]
+      ]
+    },
+    {
+      name: 'mooning-stickman',
+      lineWidth: 2.8,
+      strokes: [
+        [[0.495,0.28],[0.505,0.28]],
+        [[0.50,0.31],[0.50,0.47]],
+        [[0.50,0.36],[0.42,0.42]],
+        [[0.50,0.36],[0.60,0.33]],
+        [[0.50,0.47],[0.44,0.57]],
+        [[0.50,0.47],[0.59,0.55]],
+        [[0.44,0.57],[0.44,0.69],[0.48,0.74],[0.52,0.69],[0.52,0.57]],
+        [[0.48,0.57],[0.48,0.74]]
+      ]
+    },
+    {
+      name: 'angry-rude-face',
+      lineWidth: 3.0,
+      strokes: [
+        [[0.50,0.18],[0.62,0.22],[0.72,0.30],[0.80,0.42],[0.82,0.54],[0.78,0.66],[0.70,0.76],[0.58,0.82],[0.45,0.83],[0.33,0.79],[0.24,0.70],[0.18,0.58],[0.18,0.45],[0.24,0.34],[0.34,0.25],[0.50,0.18]],
+        [[0.34,0.42],[0.42,0.40]],
+        [[0.56,0.40],[0.65,0.42]],
+        [[0.385,0.53],[0.405,0.53]],
+        [[0.605,0.53],[0.625,0.53]],
+        [[0.36,0.67],[0.44,0.73],[0.54,0.74],[0.64,0.67]],
+        [[0.50,0.58],[0.50,0.66]]
+      ]
+    }
+  ];
+  if (doodles.length === 1) return doodles[0];
+  let pick = doodles[Math.floor(Math.random() * doodles.length)];
+  for (let i = 0; i < 5 && pick && pick.name === handAutoDoodleLastName; i += 1){
+    pick = doodles[Math.floor(Math.random() * doodles.length)];
+  }
+  handAutoDoodleLastName = pick ? pick.name : '';
+  return pick || doodles[0];
+}
+
+function getHandCanvasSize(){
+  if (!handCanvas) return { w: 300, h: 180 };
+  const rect = handCanvas.getBoundingClientRect();
+  return {
+    w: Math.max(280, Math.floor(rect.width || handCanvas.clientWidth || 300)),
+    h: Math.max(180, Math.floor(rect.height || 180))
+  };
+}
+
+function drawHandStrokePortion(points, portion, w, h){
+  if (!handCtx || !Array.isArray(points) || points.length < 2 || portion <= 0) return;
+  const px = points.map(function(pt){ return [pt[0] * w, pt[1] * h]; });
+  const segLens = [];
+  let total = 0;
+  for (let i = 1; i < px.length; i += 1){
+    const dx = px[i][0] - px[i - 1][0];
+    const dy = px[i][1] - px[i - 1][1];
+    const len = Math.sqrt((dx * dx) + (dy * dy));
+    segLens.push(len);
+    total += len;
+  }
+  if (total <= 0) return;
+  let remaining = Math.min(1, Math.max(0, portion)) * total;
+  handCtx.beginPath();
+  handCtx.moveTo(px[0][0], px[0][1]);
+  for (let i = 1; i < px.length; i += 1){
+    const len = segLens[i - 1];
+    if (remaining >= len){
+      handCtx.lineTo(px[i][0], px[i][1]);
+      remaining -= len;
+      continue;
+    }
+    if (remaining > 0){
+      const ratio = remaining / len;
+      const x = px[i - 1][0] + ((px[i][0] - px[i - 1][0]) * ratio);
+      const y = px[i - 1][1] + ((px[i][1] - px[i - 1][1]) * ratio);
+      handCtx.lineTo(x, y);
+    }
+    break;
+  }
+  handCtx.stroke();
+}
+
+function drawHandDoodleProgress(doodle, progress){
+  if (!handCtx || !handCanvas || !doodle) return;
+  const size = getHandCanvasSize();
+  const w = size.w;
+  const h = size.h;
+  clearHandwritePad();
+  const isLight = document.body.classList.contains('light-mode');
+  const ink = isLight ? '#0d1526' : '#ffffff';
+  if (!Array.isArray(doodle.strokes)) return;
+  handCtx.strokeStyle = ink;
+  handCtx.lineCap = 'round';
+  handCtx.lineJoin = 'round';
+  handCtx.lineWidth = doodle.lineWidth || 3.1;
+  const lengths = doodle.strokes.map(function(stroke){
+    let l = 0;
+    for (let i = 1; i < stroke.length; i += 1){
+      const dx = (stroke[i][0] - stroke[i - 1][0]) * w;
+      const dy = (stroke[i][1] - stroke[i - 1][1]) * h;
+      l += Math.sqrt((dx * dx) + (dy * dy));
+    }
+    return Math.max(0, l);
+  });
+  const total = lengths.reduce(function(sum, n){ return sum + n; }, 0) || 1;
+  let drawLen = total * Math.min(1, Math.max(0, progress));
+  for (let s = 0; s < doodle.strokes.length; s += 1){
+    const strokeLen = lengths[s];
+    if (drawLen <= 0) break;
+    const portion = Math.min(1, drawLen / Math.max(1, strokeLen));
+    drawHandStrokePortion(doodle.strokes[s], portion, w, h);
+    drawLen -= strokeLen;
+  }
+}
+
+function stopHandAutoDoodle(clearNow){
+  handAutoDoodleToken += 1;
+  handAutoDoodleActive = false;
+  if (clearNow) clearHandwritePad();
+}
+
+async function startHandAutoDoodleLoop(){
+  handAutoDoodleToken += 1;
+  handAutoDoodleActive = false;
+  return;
+}
+
+function anonPlaceholderSleep(ms){
+  return new Promise(function(resolve){ setTimeout(resolve, ms); });
+}
+
+function getNextAnonPlaceholderWord(){
+  if (!ANON_MESSAGE_PLACEHOLDER_WORDS.length) return '';
+  if (ANON_MESSAGE_PLACEHOLDER_WORDS.length === 1) return ANON_MESSAGE_PLACEHOLDER_WORDS[0];
+  let next = '';
+  for (let i = 0; i < 6; i += 1){
+    const candidate = ANON_MESSAGE_PLACEHOLDER_WORDS[Math.floor(Math.random() * ANON_MESSAGE_PLACEHOLDER_WORDS.length)];
+    if (candidate && candidate !== anonPlaceholderLastWord){
+      next = candidate;
+      break;
+    }
+  }
+  if (!next) next = ANON_MESSAGE_PLACEHOLDER_WORDS[Math.floor(Math.random() * ANON_MESSAGE_PLACEHOLDER_WORDS.length)];
+  anonPlaceholderLastWord = next;
+  return next;
+}
+
+function canAnimateAnonPlaceholder(){
+  const input = $('messageInput');
+  if (!input) return false;
+  if (input.value && input.value.length > 0) return false;
+  if (document.activeElement === input) return false;
+  return true;
+}
+
+function setAnonPlaceholderText(text){
+  const input = $('messageInput');
+  if (!input) return;
+  input.placeholder = text || ANON_MESSAGE_PLACEHOLDER_DEFAULT;
+}
+
+function stopAnonPlaceholderLoop(clearNow){
+  anonPlaceholderLoopToken += 1;
+  anonPlaceholderLoopActive = false;
+  if (clearNow) {
+    const input = $('messageInput');
+    if (input) input.placeholder = '';
+  }
+}
+
+function refreshAnonPlaceholder(){
+  if (!canAnimateAnonPlaceholder()){
+    stopAnonPlaceholderLoop(document.activeElement === $('messageInput'));
+    if (document.activeElement !== $('messageInput')) setAnonPlaceholderText(ANON_MESSAGE_PLACEHOLDER_DEFAULT);
+    return;
+  }
+  if (!anonPlaceholderLoopActive) {
+    startAnonPlaceholderLoop();
+  }
+}
+
+async function startAnonPlaceholderLoop(){
+  if (anonPlaceholderLoopActive) return;
+  anonPlaceholderLoopActive = true;
+  const token = ++anonPlaceholderLoopToken;
+  try {
+    while (token === anonPlaceholderLoopToken){
+      if (!canAnimateAnonPlaceholder()){
+        setAnonPlaceholderText(ANON_MESSAGE_PLACEHOLDER_DEFAULT);
+        await anonPlaceholderSleep(260);
+        continue;
+      }
+      const word = getNextAnonPlaceholderWord() || '';
+      if (!word){
+        setAnonPlaceholderText(ANON_MESSAGE_PLACEHOLDER_DEFAULT);
+        await anonPlaceholderSleep(400);
+        continue;
+      }
+      const typeDelay = Math.max(80, Math.round(ANON_MESSAGE_PLACEHOLDER_TYPE_MS / Math.max(1, word.length)));
+      let typed = '';
+      for (let i = 0; i < word.length; i += 1){
+        if (token !== anonPlaceholderLoopToken) return;
+        if (!canAnimateAnonPlaceholder()) break;
+        typed += word.charAt(i);
+        setAnonPlaceholderText(typed);
+        await anonPlaceholderSleep(typeDelay);
+      }
+      if (!canAnimateAnonPlaceholder()) continue;
+      await anonPlaceholderSleep(ANON_MESSAGE_PLACEHOLDER_HOLD_MS);
+      const deleteDelay = Math.max(80, Math.round(ANON_MESSAGE_PLACEHOLDER_DELETE_MS / Math.max(1, word.length)));
+      for (let i = word.length; i >= 0; i -= 1){
+        if (token !== anonPlaceholderLoopToken) return;
+        if (!canAnimateAnonPlaceholder()) break;
+        setAnonPlaceholderText(word.slice(0, i));
+        await anonPlaceholderSleep(deleteDelay);
+      }
+      if (!canAnimateAnonPlaceholder()) continue;
+      setAnonPlaceholderText(ANON_MESSAGE_PLACEHOLDER_DEFAULT);
+      await anonPlaceholderSleep(ANON_MESSAGE_PLACEHOLDER_IDLE_MS);
+    }
+  } finally {
+    if (token === anonPlaceholderLoopToken) anonPlaceholderLoopActive = false;
+  }
+}
+
+function privateNextExpiryMsForThread(threadId){
+  const tid = String(threadId || '');
+  if (!tid) return 0;
+  const now = Date.now();
+  return privateMessages
+    .filter(function(row){
+      return row && String(row.thread_id || '') === tid && row.expires_at;
+    })
+    .map(function(row){ return new Date(row.expires_at).getTime(); })
+    .filter(function(ms){ return Number.isFinite(ms) && ms > now; })
+    .sort(function(a, b){ return a - b; })[0] || 0;
+}
+
+function updatePrivateCountdownUi(){
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  const sub = $('pmConversationSub');
+  const timer = $('pmAutoDeleteSelect');
+  if (!thread || !sub || !timer) return;
+  if (timer.value !== (thread.timerSeconds ? String(thread.timerSeconds) : 'off')) {
+    timer.value = thread.timerSeconds ? String(thread.timerSeconds) : 'off';
+  }
+  const base = privateTimerLabel(thread.timerSeconds);
+  const nextExpiryMs = privateNextExpiryMsForThread(thread.id);
+  sub.textContent = nextExpiryMs ? (base + ' · Next delete in ' + formatLiveCountdown(nextExpiryMs - Date.now())) : base;
+
+  const expiryNodes = Array.from(document.querySelectorAll('.pm-message-expiry[data-expires-at]'));
+  expiryNodes.forEach(function(node){
+    const expiresAt = String(node.dataset.expiresAt || '');
+    if (!expiresAt) return;
+    const ms = new Date(expiresAt).getTime();
+    node.textContent = ms ? ('Expires in ' + formatLiveCountdown(ms - Date.now())) : 'No auto-remove';
+  });
+
+  const hasExpired = privateMessages.some(function(row){
+    return row && row.expires_at && new Date(row.expires_at).getTime() <= Date.now();
+  });
+  if (hasExpired && !privateCountdownRefreshBusy) {
+    privateCountdownRefreshBusy = true;
+    Promise.resolve((async function(){
+      await runPrivateExpiryCleanup(true);
+      await loadPrivateMessaging({ forcePanelLoad: true, markRead: false });
+    })())
+      .catch(function(){})
+      .finally(function(){ privateCountdownRefreshBusy = false; });
+  }
+}
+
+function startPrivateCountdownTicker(){
+  if (privateCountdownTimer) return;
+  privateCountdownTimer = setInterval(function(){
+    try { updatePrivateCountdownUi(); } catch (e) {}
+  }, 1000);
+}
+
+function stopPrivateCountdownTicker(){
+  if (!privateCountdownTimer) return;
+  clearInterval(privateCountdownTimer);
+  privateCountdownTimer = null;
+}
+
+async function runPrivateExpiryCleanup(force){
+  if (!sb) return;
+  const nowMs = Date.now();
+  if (!force && (nowMs - privateExpiryCleanupAtMs) < 15000) return;
+  privateExpiryCleanupAtMs = nowMs;
+  try {
+    await sb.rpc('pw_message_board_private_cleanup_expired');
+  } catch (e) {
+    console.warn('Private expiry cleanup failed (non-fatal):', e);
+  }
+}
+
+function privateTimeLabel(ts){
+  if (!ts) return '';
+  try {
+    return new Date(ts).toLocaleString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  } catch (e) {
+    return '';
+  }
+}
+
+function privatePreviewText(text){
+  const raw = String(text || '').trim();
+  if (!raw) return 'No messages yet';
+  return raw.length > 64 ? (raw.slice(0, 64) + '...') : raw;
+}
+
+function privatePartnerId(thread){
+  if (!thread || !currentUser || !currentUser.id) return '';
+  const me = String(currentUser.id);
+  const a = String(thread.participant_a_user_id || '');
+  const b = String(thread.participant_b_user_id || '');
+  return a === me ? b : a;
+}
+
+function privateProfileLookupMap(){
+  const map = new Map();
+  if (currentProfile && currentProfile.id) map.set(String(currentProfile.id), currentProfile);
+  privateProfiles.forEach(function(profile){
+    if (profile && profile.id) map.set(String(profile.id), profile);
+  });
+  return map;
+}
+
+function privateDisplayName(userId){
+  const key = String(userId || '');
+  if (!key) return 'Unknown user';
+  const profile = privateProfileLookupMap().get(key);
+  if (!profile) return 'User';
+  return String(profile.full_name || profile.email || 'User').trim() || 'User';
+}
+function isPrivateAdminUserId(userId){
+  const key = String(userId || '');
+  if (!key) return false;
+  return privateAdminUserIds.has(key);
+}
+
+function setPrivateMessagingAvailability(enabled, reason){
+  privateMessagingReady = !!enabled;
+  const btn = $('privateToggleBtn');
+  const badge = $('privateUnreadBadge');
+  const panel = $('privatePanel');
+  if (btn) {
+    btn.disabled = false;
+    btn.title = enabled ? 'Open private messages' : (reason || 'Private messaging unavailable');
+    btn.classList.remove('unread');
+    if (!enabled) btn.classList.remove('active');
+  }
+  if (badge) {
+    badge.textContent = '0';
+    if (!enabled) badge.classList.add('hidden');
+  }
+  if (panel && !enabled) panel.open = false;
+}
+
+function updatePrivateToggleState(){
+  const btn = $('privateToggleBtn');
+  const badge = $('privateUnreadBadge');
+  if (!btn || !badge) return;
+  const total = privateThreads.reduce(function(sum, thread){ return sum + (thread.unreadCount || 0); }, 0);
+  badge.textContent = String(total);
+  badge.classList.toggle('hidden', total <= 0);
+  btn.classList.toggle('unread', total > 0);
+}
+
+function renderPrivateThreadList(){
+  const host = $('pmThreadList');
+  if (!host) return;
+  if (!privateThreads.length) {
+    host.innerHTML = '<div class="empty">No private conversations yet.</div>';
+    return;
+  }
+  host.innerHTML = privateThreads.map(function(thread){
+    const unread = thread.unreadCount || 0;
+    const active = String(thread.id) === String(privateCurrentThreadId);
+    return '<button type="button" class="pm-thread-item' + (active ? ' active' : '') + (unread ? ' unread' : '') + '" onclick="selectPrivateThread(\'' + esc(thread.id) + '\')">'
+      + '<div class="pm-thread-top"><div class="pm-thread-name">' + esc(thread.partnerName) + '</div>' + (unread ? ('<span class="pm-unread-badge">' + esc(String(unread)) + '</span>') : '') + '</div>'
+      + '<div class="pm-thread-preview">' + esc(thread.preview) + '</div>'
+      + '<div class="pm-thread-meta">' + esc(privateTimerLabel(thread.timerSeconds)) + ' · ' + esc(thread.updatedLabel || 'Active') + '</div>'
+      + '</button>';
+  }).join('');
+}
+
+function renderPrivateMessages(){
+  const host = $('pmMessageList');
+  if (!host) return;
+  if (!privateCurrentThreadId) {
+    host.innerHTML = '';
+    return;
+  }
+  if (!privateMessages.length) {
+    host.innerHTML = '<div class="empty">No direct messages yet.</div>';
+    return;
+  }
+  host.innerHTML = privateMessages.map(function(row){
+    const mine = !!(currentUser && row && row.sender_user_id && String(row.sender_user_id) === String(currentUser.id));
+    const expiresText = row && row.expires_at ? ('Expires in ' + formatLiveCountdown(new Date(row.expires_at).getTime() - Date.now())) : 'No auto-remove';
+    return '<article class="pm-message' + (mine ? ' outgoing' : '') + '">'
+      + '<div class="pm-message-head"><span class="pm-message-author">' + esc(mine ? 'You' : privateDisplayName(row.sender_user_id)) + '</span><span class="pm-message-time">' + esc(privateTimeLabel(row.created_at)) + '</span></div>'
+      + '<div class="pm-message-text">' + esc(String(row.message_text || '')) + '</div>'
+      + '<div class="pm-message-expiry" data-expires-at="' + esc(String(row.expires_at || '')) + '">' + esc(expiresText) + '</div>'
+      + (mine ? ('<div class="pm-message-actions"><button class="pm-message-delete" type="button" onclick="deletePrivateMessage(\'' + esc(row.id) + '\')">Delete my message</button></div>') : '')
+      + '</article>';
+  }).join('');
+  host.scrollTop = host.scrollHeight;
+}
+
+function updatePrivateConversationUi(){
+  const empty = $('pmConversationEmpty');
+  const wrap = $('pmConversationWrap');
+  const title = $('pmConversationTitle');
+  const sub = $('pmConversationSub');
+  const timer = $('pmAutoDeleteSelect');
+  if (!empty || !wrap || !title || !sub || !timer) return;
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  if (!thread) {
+    empty.classList.remove('hidden');
+    wrap.classList.add('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  wrap.classList.remove('hidden');
+  title.textContent = thread.partnerName;
+  sub.textContent = privateTimerLabel(thread.timerSeconds);
+  timer.value = thread.timerSeconds ? String(thread.timerSeconds) : 'off';
+  updatePrivateCountdownUi();
+}
+
+function populatePrivateRecipients(){
+  const select = $('pmRecipientSelect');
+  const openBtn = $('pmOpenChatBtn');
+  if (!select) return;
+  const current = String(select.value || '');
+  const options = privateProfiles
+    .filter(function(profile){ return profile && profile.id && String(profile.id) !== String(currentUser && currentUser.id); })
+    .sort(function(a, b){
+      const aa = String(a.full_name || a.email || '').toLowerCase();
+      const bb = String(b.full_name || b.email || '').toLowerCase();
+      return aa.localeCompare(bb);
+    })
+    .map(function(profile){
+      const label = String(profile.full_name || profile.email || 'User');
+      return '<option value="' + esc(String(profile.id)) + '">' + esc(label) + '</option>';
+    }).join('');
+  select.innerHTML = '<option value="">Select person...</option>' + options;
+  if (openBtn) {
+    const hasChoices = options.length > 0;
+    openBtn.disabled = !hasChoices;
+    openBtn.title = hasChoices ? 'Open chat' : 'No eligible users available for private chat';
+  }
+  if (current) {
+    const hasCurrent = Array.from(select.options || []).some(function(opt){ return String(opt.value) === current; });
+    if (hasCurrent) select.value = current;
+  }
+}
+
+async function ensurePrivateReadRow(threadId){
+  if (!threadId || !currentUser || !currentUser.id) return;
+  const nowIso = new Date().toISOString();
+  const payload = { thread_id: threadId, user_id: currentUser.id, last_read_at: nowIso, updated_at: nowIso };
+  const res = await sb.from(PM_READ_TABLE).upsert(payload, { onConflict: 'thread_id,user_id' });
+  if (res && res.error) throw res.error;
+}
+
+async function markPrivateThreadRead(threadId){
+  if (!threadId || !currentUser || !currentUser.id) return;
+  const nowIso = new Date().toISOString();
+  await ensurePrivateReadRow(threadId);
+  privateReadByThread[String(threadId)] = nowIso;
+  privateThreads = privateThreads.map(function(thread){
+    if (String(thread.id) === String(threadId)) return Object.assign({}, thread, { unreadCount: 0 });
+    return thread;
+  });
+  renderPrivateThreadList();
+  updatePrivateToggleState();
+}
+
+async function loadPrivateProfiles(){
+  const uid = currentUser && currentUser.id ? String(currentUser.id) : '';
+  if (!uid) {
+    privateProfiles = [];
+    privateAdminUserIds = new Set();
+    populatePrivateRecipients();
+    return;
+  }
+  let res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled,message_board_access,role').eq('approved', true).eq('disabled', false).neq('id', uid);
+  if (res.error) {
+    const msg = String(res.error && (res.error.message || res.error.details || '')).toLowerCase();
+    if (msg.indexOf('message_board_access') >= 0 || msg.indexOf('role') >= 0 || msg.indexOf('schema cache') >= 0) {
+      res = await sb.from('pw_profiles').select('id,full_name,email,approved,disabled').eq('approved', true).eq('disabled', false).neq('id', uid);
+    }
+  }
+  if (res.error) throw res.error;
+  const profiles = (res.data || []).filter(function(profile){ return !!profile; });
+  const roleAdminIds = profiles
+    .filter(function(profile){ return String(profile.role || '').toLowerCase() === 'admin'; })
+    .map(function(profile){ return String(profile.id || ''); })
+    .filter(Boolean);
+  let kilnAdminIds = [];
+  try {
+    const kilnRes = await sb.from('kiln_users').select('auth_user_id').eq('is_admin', true);
+    if (!kilnRes.error) {
+      kilnAdminIds = (kilnRes.data || []).map(function(row){
+        return String(row && row.auth_user_id ? row.auth_user_id : '');
+      }).filter(Boolean);
+    }
+  } catch (e) {}
+  privateAdminUserIds = new Set(roleAdminIds.concat(kilnAdminIds));
+  privateProfiles = profiles.filter(function(profile){
+    const profileId = String(profile.id || '');
+    return profile.message_board_access !== false && !privateAdminUserIds.has(profileId);
+  });
+  populatePrivateRecipients();
+}
+
+function buildPrivateThreadSummaries(rawThreads, rawMessages){
+  const byThread = {};
+  (rawMessages || []).forEach(function(row){
+    const key = String(row.thread_id || '');
+    if (!key) return;
+    if (!byThread[key]) byThread[key] = [];
+    byThread[key].push(row);
+  });
+  return (rawThreads || []).map(function(thread){
+    const id = String(thread.id || '');
+    const messages = (byThread[id] || []).sort(function(a, b){ return rowTimeMs(b) - rowTimeMs(a); });
+    const latest = messages[0] || null;
+    const partnerId = privatePartnerId(thread);
+    const readMs = new Date(privateReadByThread[id] || '1970-01-01T00:00:00.000Z').getTime();
+    const unreadCount = messages.filter(function(msg){
+      const sender = String(msg.sender_user_id || '');
+      return sender && sender !== String(currentUser && currentUser.id) && rowTimeMs(msg) > readMs;
+    }).length;
+    const updatedMs = Math.max(
+      rowTimeMs(latest),
+      rowTimeMs({ created_at: thread.updated_at }),
+      rowTimeMs({ created_at: thread.created_at })
+    );
+    const timerSeconds = thread.auto_delete_enabled ? normalizePmTimerSeconds(thread.auto_delete_seconds) : null;
+    return {
+      id: id,
+      raw: thread,
+      partnerId: partnerId,
+      partnerName: privateDisplayName(partnerId),
+      unreadCount: unreadCount,
+      preview: latest ? privatePreviewText(latest.message_text) : 'No messages yet',
+      updatedMs: updatedMs,
+      updatedLabel: latest
+        ? formatAge(latest.created_at)
+        : (thread.updated_at ? formatAge(thread.updated_at) : formatAge(thread.created_at)),
+      timerSeconds: timerSeconds
+    };
+  }).filter(Boolean).sort(function(a, b){ return b.updatedMs - a.updatedMs; });
+}
+
+async function loadPrivateThreads(){
+  const uid = currentUser && currentUser.id ? String(currentUser.id) : '';
+  if (!uid) {
+    privateThreads = [];
+    renderPrivateThreadList();
+    updatePrivateToggleState();
+    return;
+  }
+  await runPrivateExpiryCleanup(false);
+  const threadRes = await sb
+    .from(PM_THREAD_TABLE)
+    .select('*')
+    .or('participant_a_user_id.eq.' + uid + ',participant_b_user_id.eq.' + uid)
+    .order('updated_at', { ascending: false })
+    .limit(300);
+  if (threadRes.error) throw threadRes.error;
+  const rawThreads = threadRes.data || [];
+  const threadIds = rawThreads.map(function(thread){ return thread.id; }).filter(Boolean);
+  privateReadByThread = {};
+  if (threadIds.length) {
+    const readRes = await sb.from(PM_READ_TABLE).select('thread_id,last_read_at').eq('user_id', uid).in('thread_id', threadIds);
+    if (readRes.error) throw readRes.error;
+    (readRes.data || []).forEach(function(row){
+      privateReadByThread[String(row.thread_id)] = String(row.last_read_at || '');
+    });
+  }
+  let rawMessages = [];
+  if (threadIds.length) {
+    const nowIso = new Date().toISOString();
+    let msgRes = await sb
+      .from(PM_MESSAGE_TABLE)
+      .select('id,thread_id,sender_user_id,message_text,created_at,expires_at')
+      .in('thread_id', threadIds)
+      .or('expires_at.is.null,expires_at.gt.' + nowIso)
+      .order('created_at', { ascending: false })
+      .limit(2000);
+    if (msgRes.error) {
+      const msgText = String(msgRes.error && (msgRes.error.message || msgRes.error.details || '')).toLowerCase();
+      if (msgText.indexOf('expires_at') >= 0 || msgText.indexOf('schema cache') >= 0) {
+        msgRes = await sb
+          .from(PM_MESSAGE_TABLE)
+          .select('id,thread_id,sender_user_id,message_text,created_at')
+          .in('thread_id', threadIds)
+          .order('created_at', { ascending: false })
+          .limit(2000);
+      }
+    }
+    if (msgRes.error) throw msgRes.error;
+    rawMessages = msgRes.data || [];
+  }
+  privateThreads = buildPrivateThreadSummaries(rawThreads, rawMessages);
+  renderPrivateThreadList();
+  updatePrivateToggleState();
+}
+
+async function ensurePrivateThreadForPair(myUserId, partnerUserId){
+  const sorted = [String(myUserId || ''), String(partnerUserId || '')].sort();
+  if (!sorted[0] || !sorted[1] || sorted[0] === sorted[1]) throw new Error('Invalid private chat pair.');
+  const existingRes = await sb
+    .from(PM_THREAD_TABLE)
+    .select('*')
+    .eq('participant_a_user_id', sorted[0])
+    .eq('participant_b_user_id', sorted[1])
+    .order('updated_at', { ascending: false })
+    .limit(1);
+  if (existingRes.error) throw existingRes.error;
+  let thread = existingRes.data && existingRes.data[0] ? existingRes.data[0] : null;
+  if (thread && thread.id) return thread;
+  const createRes = await sb
+    .from(PM_THREAD_TABLE)
+    .insert({
+      participant_a_user_id: sorted[0],
+      participant_b_user_id: sorted[1],
+      auto_delete_enabled: false,
+      auto_delete_seconds: null
+    })
+    .select('*')
+    .single();
+  if (createRes.error) {
+    const createMsg = String(createRes.error.message || createRes.error.details || '').toLowerCase();
+    if (createMsg.includes('duplicate') || createMsg.includes('unique')) {
+      const retryRes = await sb
+        .from(PM_THREAD_TABLE)
+        .select('*')
+        .eq('participant_a_user_id', sorted[0])
+        .eq('participant_b_user_id', sorted[1])
+        .order('updated_at', { ascending: false })
+        .limit(1);
+      if (retryRes.error) throw retryRes.error;
+      thread = retryRes.data && retryRes.data[0] ? retryRes.data[0] : null;
+      if (thread && thread.id) return thread;
+    }
+    throw createRes.error;
+  }
+  return createRes.data || null;
+}
+
+async function loadPrivateMessagesForCurrentThread(markRead){
+  const threadId = String(privateCurrentThreadId || '');
+  if (!threadId) {
+    privateMessages = [];
+    renderPrivateMessages();
+    return;
+  }
+  const nowIso = new Date().toISOString();
+  let res = await sb
+    .from(PM_MESSAGE_TABLE)
+    .select('id,thread_id,sender_user_id,message_text,created_at,expires_at')
+    .eq('thread_id', threadId)
+    .or('expires_at.is.null,expires_at.gt.' + nowIso)
+    .order('created_at', { ascending: true })
+    .limit(1000);
+  if (res.error) {
+    const msgText = String(res.error && (res.error.message || res.error.details || '')).toLowerCase();
+    if (msgText.indexOf('expires_at') >= 0 || msgText.indexOf('schema cache') >= 0) {
+      res = await sb
+        .from(PM_MESSAGE_TABLE)
+        .select('id,thread_id,sender_user_id,message_text,created_at')
+        .eq('thread_id', threadId)
+        .order('created_at', { ascending: true })
+        .limit(1000);
+    }
+  }
+  if (res.error) throw res.error;
+  privateMessages = res.data || [];
+  renderPrivateMessages();
+  if (markRead !== false) {
+    try {
+      await markPrivateThreadRead(threadId);
+    } catch (readErr) {
+      console.warn('Private read sync failed (non-fatal):', readErr);
+    }
+  }
+}
+
+async function loadPrivateMessaging(options){
+  const opts = options || {};
+  if (!currentUser || !currentUser.id) return;
+  try {
+    await loadPrivateProfiles();
+    await loadPrivateThreads();
+    const panel = $('privatePanel');
+    const panelOpen = !!(panel && panel.open && !panel.classList.contains('hidden'));
+    if (!panelOpen) return;
+    if (!privateCurrentThreadId && privateThreads.length) privateCurrentThreadId = String(privateThreads[0].id);
+    if (privateCurrentThreadId && !privateThreads.some(function(thread){ return String(thread.id) === String(privateCurrentThreadId); })) {
+      privateCurrentThreadId = '';
+      privateMessages = [];
+    }
+    updatePrivateConversationUi();
+    renderPrivateThreadList();
+    if (privateCurrentThreadId) await loadPrivateMessagesForCurrentThread(opts.markRead);
+    setPrivateMessagingAvailability(true);
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not load private messages.');
+  }
+}
+
+async function selectPrivateThread(threadId){
+  privateCurrentThreadId = String(threadId || '');
+  updatePrivateConversationUi();
+  renderPrivateThreadList();
+  if (!privateCurrentThreadId) return;
+  try {
+    await loadPrivateMessagesForCurrentThread(true);
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not open this conversation.');
+  }
+}
+
+async function openPrivateThreadFromSelection(){
+  if (!privateMessagingReady) {
+    setToast('Private messaging is not available yet.');
+    return;
+  }
+  const select = $('pmRecipientSelect');
+  const partnerId = String(select && select.value ? select.value : '');
+  if (!partnerId) {
+    if (!privateProfiles.length) {
+      setToast('No eligible users available for private chat right now.');
+      return;
+    }
+    setToast('Select a person first.');
+    return;
+  }
+  if (!currentUser || !currentUser.id || String(currentUser.id) === partnerId) {
+    setToast('Choose another user.');
+    return;
+  }
+  if (isPrivateAdminUserId(partnerId)) {
+    setToast('Private messages to admin accounts are not allowed.');
+    return;
+  }
+  try {
+    const uid = String(currentUser.id);
+    const sorted = [uid, partnerId].sort();
+    const existingRes = await sb
+      .from(PM_THREAD_TABLE)
+      .select('*')
+      .eq('participant_a_user_id', sorted[0])
+      .eq('participant_b_user_id', sorted[1])
+      .order('updated_at', { ascending: false })
+      .limit(1);
+    if (existingRes.error) throw existingRes.error;
+    let thread = existingRes.data && existingRes.data[0] ? existingRes.data[0] : null;
+    if (!thread) {
+      const createRes = await sb
+        .from(PM_THREAD_TABLE)
+        .insert({
+          participant_a_user_id: sorted[0],
+          participant_b_user_id: sorted[1],
+          auto_delete_enabled: false,
+          auto_delete_seconds: null
+        })
+        .select('*')
+        .single();
+      if (createRes.error) {
+        const createMsg = String(createRes.error.message || createRes.error.details || '').toLowerCase();
+        if (createMsg.includes('duplicate') || createMsg.includes('unique')) {
+          const retryRes = await sb
+            .from(PM_THREAD_TABLE)
+            .select('*')
+            .eq('participant_a_user_id', sorted[0])
+            .eq('participant_b_user_id', sorted[1])
+            .order('updated_at', { ascending: false })
+            .limit(1);
+          if (retryRes.error) throw retryRes.error;
+          thread = retryRes.data && retryRes.data[0] ? retryRes.data[0] : null;
+        } else {
+          throw createRes.error;
+        }
+      } else {
+        thread = createRes.data || null;
+      }
+    }
+    if (!thread || !thread.id) throw new Error('Could not start conversation.');
+    privateCurrentThreadId = String(thread.id);
+    try {
+      await ensurePrivateReadRow(privateCurrentThreadId);
+    } catch (readErr) {
+      console.warn('Private read bootstrap failed (non-fatal):', readErr);
+    }
+    const panel = $('privatePanel');
+    if (panel) {
+      panel.classList.remove('hidden');
+      panel.open = true;
+    }
+    await loadPrivateThreads();
+    if (!privateThreads.some(function(item){ return String(item.id) === String(privateCurrentThreadId); })) {
+      const partnerName = privateDisplayName(partnerId);
+      privateThreads.push({
+        id: privateCurrentThreadId,
+        raw: thread,
+        partnerId: String(partnerId),
+        partnerName: partnerName,
+        unreadCount: 0,
+        preview: 'No messages yet',
+        updatedMs: Date.now(),
+        updatedLabel: 'just now',
+        timerSeconds: null
+      });
+      privateThreads.sort(function(a, b){ return (b.updatedMs || 0) - (a.updatedMs || 0); });
+    }
+    updatePrivateConversationUi();
+    renderPrivateThreadList();
+    await loadPrivateMessagesForCurrentThread(true);
+    setToast('Chat opened.');
+  } catch (err) {
+    console.error('Open private chat failed:', err);
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not open private chat: ' + (err && err.message ? err.message : 'Unknown error'));
+  }
+}
+
+async function applyPmTimerToThreadMessages(threadId, seconds){
+  const res = await sb.from(PM_MESSAGE_TABLE).select('id,created_at').eq('thread_id', threadId).limit(1000);
+  if (res.error) throw res.error;
+  const rows = res.data || [];
+  for (const row of rows) {
+    const nextExpires = seconds ? new Date(new Date(row.created_at).getTime() + (seconds * 1000)).toISOString() : null;
+    const upd = await sb.from(PM_MESSAGE_TABLE).update({ expires_at: nextExpires }).eq('id', row.id);
+    if (upd.error) throw upd.error;
+  }
+}
+
+async function savePmTimer(){
+  if (!privateCurrentThreadId) {
+    setToast('Open a conversation first.');
+    return;
+  }
+  const timerSelect = $('pmAutoDeleteSelect');
+  const seconds = normalizePmTimerSeconds(timerSelect ? timerSelect.value : 'off');
+  try {
+    const updateRes = await sb
+      .from(PM_THREAD_TABLE)
+      .update({
+        auto_delete_enabled: !!seconds,
+        auto_delete_seconds: seconds,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', privateCurrentThreadId);
+    if (updateRes.error) throw updateRes.error;
+    await applyPmTimerToThreadMessages(privateCurrentThreadId, seconds);
+    await loadPrivateMessaging({ forcePanelLoad: true, markRead: false });
+    await loadPrivateMessagesForCurrentThread(false);
+    setToast('Auto-remove timer updated.');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not update auto-remove timer.');
+  }
+}
+
+async function deletePrivateConversation(){
+  if (!privateCurrentThreadId) {
+    setToast('Open a private conversation first.');
+    return;
+  }
+  const thread = privateThreads.find(function(item){ return String(item.id) === String(privateCurrentThreadId); }) || null;
+  const name = thread ? thread.partnerName : 'this conversation';
+  if (!confirm('Delete the conversation with ' + name + '?\n\nThis will remove the thread and all messages for both people.')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const del = await sb.from(PM_THREAD_TABLE).delete().eq('id', privateCurrentThreadId);
+    if (del.error) throw del.error;
+    privateCurrentThreadId = '';
+    privateMessages = [];
+    updatePrivateConversationUi();
+    renderPrivateMessages();
+    await loadPrivateThreads();
+    updateStatusDot('Database connected');
+    setToast('Conversation deleted.');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not delete conversation.');
+    updateStatusDot('Database fault');
+  }
+}
+
+async function sendPrivateMessage(){
+  const input = $('pmMessageInput');
+  const text = String(input && input.value ? input.value : '').trim();
+  if (!privateCurrentThreadId) {
+    setToast('Open a private conversation first.');
+    return;
+  }
+  if (!text) {
+    setToast('Write a private message first.');
+    return;
+  }
+  if (!currentUser || !currentUser.id) {
+    setToast('Please sign in again.');
+    return;
+  }
+  if (text.length > 2000) {
+    setToast('Private message is too long.');
+    return;
+  }
+  const currentThreadSummary = privateThreads.find(function(thread){ return String(thread.id) === String(privateCurrentThreadId); }) || null;
+  const partnerId = currentThreadSummary ? String(currentThreadSummary.partnerId || '') : '';
+  if (partnerId && isPrivateAdminUserId(partnerId)) {
+    setToast('Private messages to admin accounts are not allowed.');
+    return;
+  }
+  try {
+    updateStatusDot('Database reconnecting');
+    let sendThreadId = String(privateCurrentThreadId || '');
+    let rpcRes = await sb.rpc('pw_message_board_private_send_message', {
+      p_thread_id: sendThreadId,
+      p_message_text: text
+    });
+    if (rpcRes.error) {
+      const firstErrMsg = String(rpcRes.error.message || rpcRes.error.details || '').toLowerCase();
+      if (firstErrMsg.includes('thread not found') && partnerId && currentUser && currentUser.id) {
+        const repairedThread = await ensurePrivateThreadForPair(currentUser.id, partnerId);
+        if (repairedThread && repairedThread.id) {
+          sendThreadId = String(repairedThread.id);
+          privateCurrentThreadId = sendThreadId;
+          rpcRes = await sb.rpc('pw_message_board_private_send_message', {
+            p_thread_id: sendThreadId,
+            p_message_text: text
+          });
+        }
+      }
+      if (rpcRes.error) {
+        if (privateMessageSchemaError(rpcRes.error)) {
+          throw rpcRes.error;
+        }
+        const rpcErr = new Error(rpcRes.error.message || 'Send failed');
+        rpcErr.stage = 'rpc';
+        rpcErr.details = rpcRes.error.details || '';
+        rpcErr.hint = rpcRes.error.hint || '';
+        rpcErr.code = rpcRes.error.code || '';
+        throw rpcErr;
+      }
+    }
+    input.value = '';
+    try {
+      await loadPrivateMessagesForCurrentThread(true);
+      await loadPrivateThreads();
+    } catch (refreshErr) {
+      console.warn('Private message refresh failed (non-fatal):', refreshErr);
+      setToast('Message sent. Refresh issue detected, reopen chat if needed.');
+    }
+    updateStatusDot('Database connected');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    const errMsg = String(err && (err.message || err.details || err.hint || err.code || '') || '').trim();
+    if (/permission denied|row-level security|rls/i.test(errMsg)) {
+      setToast('Could not send private message: permission denied by database policy.');
+    } else {
+      setToast('Could not send private message' + (errMsg ? (': ' + errMsg) : '.'));
+    }
+    updateStatusDot('Database fault');
+  }
+}
+
+async function deletePrivateMessage(id){
+  if (!id || !currentUser || !currentUser.id) return;
+  if (!confirm('Delete this private message?')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const del = await sb.from(PM_MESSAGE_TABLE).delete().eq('id', id).eq('sender_user_id', currentUser.id);
+    if (del.error) throw del.error;
+    setToast('Message deleted.');
+    await loadPrivateMessagesForCurrentThread(false);
+    await loadPrivateThreads();
+    updateStatusDot('Database connected');
+  } catch (err) {
+    if (privateMessageSchemaError(err)) {
+      setPrivateMessagingAvailability(false, 'Run the private messaging SQL update first.');
+      if (!privateMessagingWarned) {
+        privateMessagingWarned = true;
+        setToast('Run the private messaging SQL update to enable direct chats.');
+      }
+      return;
+    }
+    setToast('Could not delete message.');
+    updateStatusDot('Database fault');
+  }
+}
+
+function togglePrivatePanel(forceOpen){
+  const panel = $('privatePanel');
+  const btn = $('privateToggleBtn');
+  if (!panel || !btn) return;
+  const currentlyOpen = panel.open && !panel.classList.contains('hidden');
+  const open = typeof forceOpen === 'boolean' ? forceOpen : !currentlyOpen;
+  if (open) {
+    panel.classList.remove('hidden');
+    panel.open = true;
+    btn.classList.add('active');
+  } else {
+    panel.open = false;
+    panel.classList.add('hidden');
+    btn.classList.remove('active');
+  }
+  if (open) {
+    loadPrivateMessaging({ forcePanelLoad: true, markRead: true });
+    if (panel.scrollIntoView) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function onPostKindChange(){
+  const kind = String(($('postKind') && $('postKind').value) || 'topic');
+  const topicInput = $('topicTitleInput');
+  const replySelect = $('replyTopicSelect');
+  if (!topicInput || !replySelect) return;
+  topicInput.classList.toggle('hidden', kind !== 'topic');
+  replySelect.classList.toggle('hidden', kind !== 'reply');
+}
+
+function beginReplyToTopic(threadId){
+  const select = $('replyTopicSelect');
+  const kind = $('postKind');
+  if (!select || !kind || !threadId) return;
+  kind.value = 'reply';
+  onPostKindChange();
+  select.value = String(threadId);
+  const composer = document.querySelector('.composer-grid');
+  if (composer && composer.scrollIntoView) {
+    composer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  const textArea = $('messageInput');
+  if (textArea && textArea.focus) textArea.focus();
+}
+
+function rowTimeMs(row){
+  return new Date(row && row.created_at ? row.created_at : 0).getTime() || 0;
+}
+
+function rowThreadId(row){
+  if (!row) return '';
+  return String(row.thread_root_id || row.parent_post_id || row.id || '');
+}
+
+function rowIsRoot(row){
+  if (!row) return false;
+  if (row.parent_post_id) return false;
+  const id = String(row.id || '');
+  const tid = rowThreadId(row);
+  return !tid || id === tid || !row.parent_post_id;
+}
+
+function topicTitleForRow(row){
+  const raw = String((row && row.thread_title) || '').trim();
+  return raw || 'Untitled topic';
+}
+
+function buildThreadBuckets(rows){
+  const buckets = new Map();
+  (rows || []).forEach(function(row){
+    const tid = rowThreadId(row);
+    const key = tid || String(row.id || '');
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(row);
+  });
+  return Array.from(buckets.entries()).map(function(entry){
+    const threadId = entry[0];
+    const items = entry[1].slice().sort(function(a, b){ return rowTimeMs(a) - rowTimeMs(b); });
+    const root = items.find(rowIsRoot) || items[0] || null;
+    const title = topicTitleForRow(root || {});
+    const latestMs = items.length ? rowTimeMs(items[items.length - 1]) : 0;
+    return { threadId: threadId, title: title, root: root, items: items, latestMs: latestMs };
+  }).sort(function(a, b){ return b.latestMs - a.latestMs; });
+}
+
+function populateReplyTopicSelect(rows){
+  const select = $('replyTopicSelect');
+  if (!select) return;
+  const current = String(select.value || '');
+  const threads = buildThreadBuckets(rows || []).filter(function(thread){ return thread.items && thread.items.length; });
+  select.innerHTML = '<option value="">Select topic...</option>' + threads.map(function(thread){
+    const count = thread.items.length;
+    return '<option value="' + esc(thread.threadId) + '">' + esc(thread.title) + ' (' + count + ')</option>';
+  }).join('');
+  if (threads.some(function(thread){ return thread.threadId === current; })) select.value = current;
+}
+
+function inferDrawingThemeFromDataUrl(dataUrl){
+  return new Promise(function(resolve){
+    if (!dataUrl) return resolve('');
+    const img = new Image();
+    img.onload = function(){
+      try {
+        const w = Math.max(1, img.naturalWidth || img.width || 1);
+        const h = Math.max(1, img.naturalHeight || img.height || 1);
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return resolve('');
+        ctx.drawImage(img, 0, 0, w, h);
+        const samplePoints = [
+          [2, 2],
+          [Math.max(1, w - 3), 2],
+          [2, Math.max(1, h - 3)],
+          [Math.max(1, w - 3), Math.max(1, h - 3)]
+        ];
+        let total = 0;
+        let count = 0;
+        samplePoints.forEach(function(point){
+          const x = Math.min(Math.max(0, point[0]), w - 1);
+          const y = Math.min(Math.max(0, point[1]), h - 1);
+          const rgba = ctx.getImageData(x, y, 1, 1).data;
+          total += (rgba[0] + rgba[1] + rgba[2]) / 3;
+          count++;
+        });
+        resolve((count && (total / count) > 140) ? 'light' : 'dark');
+      } catch (e) {
+        resolve('');
+      }
+    };
+    img.onerror = function(){ resolve(''); };
+    img.src = dataUrl;
+  });
+}
+
+async function refreshDrawingThemeFilters(host){
+  if (!host) return;
+  const currentTheme = getBoardTheme();
+  const imgs = Array.from(host.querySelectorAll('.note-drawing'));
+  await Promise.all(imgs.map(async function(img){
+    const declaredTheme = String(img.dataset.drawingTheme || '').toLowerCase();
+    let sourceTheme = declaredTheme === 'light' || declaredTheme === 'dark' ? declaredTheme : '';
+    if (!sourceTheme) {
+      sourceTheme = await inferDrawingThemeFromDataUrl(img.currentSrc || img.src);
+      if (sourceTheme) img.dataset.drawingTheme = sourceTheme;
+    }
+    img.style.filter = sourceTheme && sourceTheme !== currentTheme ? 'invert(1)' : '';
+  }));
+}
+
+function setTheme(isLight){
+  document.body.classList.toggle('light-mode', !!isLight);
+  if (suiteShared && suiteShared.storage) suiteShared.storage.setThemePref(isLight ? 'light' : 'dark');
+  const icon = $('themeIcon');
+  if(icon){
+    icon.innerHTML = isLight
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/>';
+  }
+  if (handCanvas && handCtx) resizeHandwritePad();
+  const boardHost = $('boardList');
+  if (boardHost) refreshDrawingThemeFilters(boardHost);
+}
+
+function toggleTheme(){
+  const nextLight = !document.body.classList.contains('light-mode');
+  setTheme(nextLight);
+  persistSharedThemePreference(nextLight);
+}
+
+async function persistSharedThemePreference(isLight){
+  if (!sb || !currentUser || !currentUser.id || !suiteShared || !suiteShared.preferences) return;
+  try { await suiteShared.preferences.saveTheme(sb, currentUser, isLight); } catch (e) {}
+}
+
+async function loadSharedThemePreference(){
+  if (!sb || !currentUser || !currentUser.id || !suiteShared || !suiteShared.preferences) return null;
+  try { return await suiteShared.preferences.loadTheme(sb, currentUser); } catch (e) { return null; }
+}
+
+function setPaletteVars(vars){
+  const targets = [document.documentElement, document.body].filter(Boolean);
+  targets.forEach(function(target){
+    Object.entries(vars).forEach(function(entry){ target.style.setProperty(entry[0], entry[1]); });
+  });
+}
+
+function clearPaletteVars(){
+  const targets = [document.documentElement, document.body].filter(Boolean);
+  targets.forEach(function(target){ PALETTE_VARS.forEach(function(k){ target.style.removeProperty(k); }); });
+}
+
+function getSoftPaletteOverrides(preset){
+  if (!sharedPalette || preset === 'basic') return null;
+  const meta = PALETTE_META_MAP[preset] || null;
+  if (!sharedPalette.rgbaFromHex) return null;
+  const ac = (meta && meta.accent) || '#1a7a35';
+  const ac2 = (meta && meta.accent2) || ac;
+  const ac3 = (meta && meta.accent3) || ac2 || ac;
+  return {
+    '--acd1': sharedPalette.rgbaFromHex(ac, .045),
+    '--acd2': sharedPalette.rgbaFromHex(ac, .085),
+    '--acd3': sharedPalette.rgbaFromHex(ac, .13),
+    '--palette-card-bg-1': sharedPalette.rgbaFromHex(ac2, .05),
+    '--palette-card-bg-2': sharedPalette.rgbaFromHex(ac, .025),
+    '--palette-card-border': sharedPalette.rgbaFromHex(ac3, .08),
+    '--palette-card-glow-1': sharedPalette.rgbaFromHex(ac3, .02),
+    '--palette-card-glow-2': sharedPalette.rgbaFromHex(ac3, .01),
+    '--eac': '0 4px 14px rgba(51,65,85,.08)'
+  };
+}
+
+function getStoredPalettePreset(){
+  const key = localStorage.getItem(PALETTE_STORAGE_KEY);
+  const normalized = (sharedPalette && sharedPalette.normalizePresetKey)
+    ? sharedPalette.normalizePresetKey(key)
+    : (key === 'plain' ? 'basic' : (PALETTE_PRESETS[key] ? key : 'default'));
+  return PALETTE_PRESETS[normalized] ? normalized : 'default';
+}
+
+async function persistSharedPalettePreference(key){
+  if (!sb || !currentUser || !currentUser.id || !suiteShared || !suiteShared.preferences) return;
+  try { await suiteShared.preferences.savePalette(sb, currentUser, key); } catch (e) {}
+}
+
+async function loadSharedPalettePreference(){
+  if (!sb || !currentUser || !currentUser.id || !suiteShared || !suiteShared.preferences) return null;
+  try {
+    const value = await suiteShared.preferences.loadPalette(sb, currentUser, Object.keys(PALETTE_PRESETS));
+    if (!value) return null;
+    if (sharedPalette && sharedPalette.normalizePresetKey) {
+      const normalized = sharedPalette.normalizePresetKey(value);
+      return PALETTE_PRESETS[normalized] ? normalized : null;
+    }
+    if (value === 'plain') return 'basic';
+    return PALETTE_PRESETS[value] ? value : null;
+  } catch (e) { return null; }
+}
+
+function updatePaletteUi(){
+  const preset = getStoredPalettePreset();
+  document.querySelectorAll('[data-palette]').forEach(function(el){ el.classList.toggle('active', el.dataset.palette === preset); });
+}
+
+function applyStoredPalette(){
+  const preset = getStoredPalettePreset();
+  const vars = preset === 'default'
+    ? ((sharedPalette && sharedPalette.getPresetVarsMap && sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default)
+      ? sharedPalette.getPresetVarsMap({ includeDescriptions: true }).default.vars
+      : null)
+    : PALETTE_PRESETS[preset].vars;
+  if (vars) setPaletteVars(vars); else clearPaletteVars();
+  const softOverrides = getSoftPaletteOverrides(preset);
+  if (softOverrides) setPaletteVars(softOverrides);
+  document.body.classList.toggle('basic-mode', preset === 'basic');
+  document.documentElement.classList.toggle('basic-mode', preset === 'basic');
+  updatePaletteUi();
+}
+
+function setPalettePreset(key){
+  if (key === 'default') localStorage.removeItem(PALETTE_STORAGE_KEY);
+  else if (PALETTE_PRESETS[key]) localStorage.setItem(PALETTE_STORAGE_KEY, key);
+  applyStoredPalette();
+  persistSharedPalettePreference(key);
+}
+
+function openPaletteModal(){ updatePaletteUi(); $('paletteModal').classList.add('open'); }
+function closePaletteModal(){ $('paletteModal').classList.remove('open'); }
+
+function updateStatusDot(stateText){
+  const label = $('syncLabel');
+  if (label) label.textContent = stateText;
+  const dot = document.querySelector('.status-dot');
+  if (suiteShared && suiteShared.ui) suiteShared.ui.applyStatusDot(dot, stateText);
+  if (dot){
+    dot.title = stateText || 'Database connected';
+    dot.setAttribute('aria-label', stateText || 'Database connected');
+  }
+}
+
+function looksLikeShortLoginName(label, emails, usernames){
+  const raw = String(label || '').trim();
+  if (!raw) return true;
+  const v = raw.toLowerCase();
+  if (v.indexOf('@') >= 0) return true;
+  const emailList = Array.isArray(emails) ? emails : [emails];
+  const userList = Array.isArray(usernames) ? usernames : [usernames];
+  const emailLocals = emailList.map(function(e){
+    return String(e || '').trim().toLowerCase().split('@')[0];
+  }).filter(Boolean);
+  const usernameVals = userList.map(function(u){
+    return String(u || '').trim().toLowerCase();
+  }).filter(Boolean);
+  if (emailLocals.indexOf(v) >= 0) return true;
+  if (usernameVals.indexOf(v) >= 0) return true;
+  return false;
+}
+
+async function syncUserChip(){
+  const chip = $('userChip');
+  if (!chip) return;
+  const profileFullName = currentProfile && currentProfile.full_name ? String(currentProfile.full_name).trim() : '';
+  const profileEmail = currentProfile && currentProfile.email ? String(currentProfile.email).trim() : '';
+  let kilnFullName = '';
+  let kilnEmail = '';
+  let kilnUsername = '';
+  if (sb && currentUser && currentUser.id) {
+    try {
+      const res = await sb.from('kiln_users').select('locked_name,email,username').eq('auth_user_id', currentUser.id).maybeSingle();
+      if (res && res.data && res.data.locked_name) kilnFullName = String(res.data.locked_name).trim();
+      if (res && res.data && res.data.email) kilnEmail = String(res.data.email).trim();
+      if (res && res.data && res.data.username) kilnUsername = String(res.data.username).trim();
+    } catch (e) {}
+  }
+  const sessionFullName = currentUser && currentUser.user_metadata
+    ? String(currentUser.user_metadata.full_name || currentUser.user_metadata.name || '').trim()
+    : '';
+  const sessionEmail = currentUser && currentUser.email ? String(currentUser.email).trim() : '';
+  const emails = [profileEmail, kilnEmail, sessionEmail];
+  const usernames = [kilnUsername];
+  const preferred = [profileFullName, sessionFullName, kilnFullName].find(function(name){
+    return name && !looksLikeShortLoginName(name, emails, usernames);
+  }) || profileFullName || sessionFullName || kilnFullName;
+  const fallbackEmail = profileEmail || kilnEmail || sessionEmail || '—';
+  const finalLabel = preferred || fallbackEmail;
+  chip.textContent = finalLabel;
+  chip.title = finalLabel;
+}
+
+async function applySuiteLogos(){
+  let src = SUITE_LOGO_FALLBACK_SRC;
+  try {
+    const stored = localStorage.getItem('pw_suite_logo_src');
+    if (stored && !/svg\+xml/i.test(stored)) src = stored;
+  } catch (e) {}
+  document.querySelectorAll('[data-suite-logo]').forEach(function(img){ img.src = src; });
+}
+
+function goBackToPlatform(){ window.location.href = '../index.html'; }
+
+async function loadMessages(){
+  try {
+    updateStatusDot('Database reconnecting');
+    const nowIso = new Date().toISOString();
+    const { data, error } = await sb
+      .from(MESSAGE_TABLE)
+      .select('*')
+      .gt('expires_at', nowIso)
+      .order('created_at', { ascending: false })
+      .limit(300);
+    if (error) throw error;
+    latestBoardRows = Array.isArray(data) ? data.slice() : [];
+    populateReplyTopicSelect(latestBoardRows);
+    renderMessages(latestBoardRows);
+    if (Array.isArray(data) && data.length && data[0] && data[0].created_at) {
+      markMessageBoardSeen(data[0].created_at);
+    }
+    updateStatusDot('Database connected');
+  } catch (err) {
+    renderMessages([], err);
+    updateStatusDot('Database fault');
+  }
+}
+
+function renderMessages(rows, err){
+  const host = $('boardList');
+  if (!host) return;
+  if (err) {
+    host.innerHTML = '<div class="empty">Could not load the board. If this is first setup, create table <code>' + esc(MESSAGE_TABLE) + '</code>.</div>';
+    return;
+  }
+  if (!rows || !rows.length) {
+    host.innerHTML = '<div class="empty">No messages yet. The board is clear.</div>';
+    return;
+  }
+  const threads = buildThreadBuckets(rows || []);
+  host.innerHTML = threads.map(function(thread){
+    const count = thread.items.length;
+    const latestLeft = thread.root && thread.root.expires_at ? formatExpiry(thread.root.expires_at) : '';
+    const leftClass = latestLeft === 'expired' ? 'bad' : (String(latestLeft).indexOf('0h') === 0 || String(latestLeft).indexOf('1h') === 0 ? 'warn' : '');
+    return '<details class="thread-group" open>'
+      + '<summary>'
+      + '<div class="thread-group-header"><div class="thread-group-title"><div class="thread-group-name">' + esc(thread.title) + '</div><div class="thread-group-sub">' + count + ' post' + (count === 1 ? '' : 's') + '</div></div></div>'
+      + '<div class="thread-group-actions">'
+      + '<button type="button" class="thread-reply-btn" onclick="event.preventDefault();event.stopPropagation();beginReplyToTopic(\'' + esc(thread.threadId) + '\')">Reply</button>'
+      + '<span class="pill ' + leftClass + '">' + esc(latestLeft || 'active') + '</span>'
+      + '<span class="thread-group-arrow" aria-hidden="true"></span>'
+      + '</div>'
+      + '</summary>'
+      + '<div class="thread-group-body">' + thread.items.map(renderThreadPost).join('') + '</div>'
+      + '</details>';
+  }).join('');
+  refreshDrawingThemeFilters(host);
+}
+
+function renderThreadPost(row){
+  const left = formatExpiry(row.expires_at);
+  const leftClass = left === 'expired' ? 'bad' : (left.indexOf('0h') === 0 || left.indexOf('1h') === 0 ? 'warn' : '');
+  const hasDrawing = !!row.message_drawing;
+  const noteText = String(row.message_text || '');
+  const caption = (hasDrawing && noteText === '[Handwritten note]') ? '' : noteText;
+  const canDelete = !!(currentUser && currentUser.id && row && row.author_user_id && String(row.author_user_id) === String(currentUser.id));
+  return '<article class="note">'
+    + '<div class="note-meta"><span class="pill">Anonymous</span><span class="pill ' + leftClass + '">' + esc(left) + '</span></div>'
+    + (hasDrawing ? ('<img class="note-drawing" data-drawing-theme="' + esc(String(row.message_drawing_theme || '')) + '" src="' + esc(row.message_drawing) + '" alt="Handwritten anonymous note">') : '')
+    + (caption ? ('<div class="note-text">' + esc(caption) + '</div>') : '')
+    + '<div class="small">Posted ' + esc(formatAge(row.created_at)) + '</div>'
+    + (canDelete ? ('<div class="note-own-actions"><button class="note-delete" type="button" onclick="deleteOwnMessage(\'' + esc(row.id) + '\')">Delete my post</button></div>') : '')
+    + '</article>';
+}
+
+async function deleteOwnMessage(id){
+  if (!id || !currentUser || !currentUser.id) return;
+  if (!confirm('Delete this post?')) return;
+  try {
+    updateStatusDot('Database reconnecting');
+    const res = await sb.from(MESSAGE_TABLE).delete().eq('id', id).eq('author_user_id', currentUser.id);
+    if (res && res.error) throw res.error;
+    setToast('Post deleted.');
+    await loadMessages();
+  } catch (err) {
+    const msg = String(err && (err.message || err || '')).toLowerCase();
+    if (msg.indexOf('author_user_id') >= 0 || msg.indexOf('schema cache') >= 0) {
+      setToast('Run the Message Board SQL update to enable deleting your own posts.');
+      return;
+    }
+    setToast('Could not delete post.');
+    updateStatusDot('Database fault');
+  }
+}
+
+async function submitMessage(){
+  const textarea = $('messageInput');
+  const btn = $('postBtn');
+  if (!textarea || !btn) return;
+  const text = String(textarea.value || '').trim();
+  const kind = String(($('postKind') && $('postKind').value) || 'topic');
+  const topicTitle = String(($('topicTitleInput') && $('topicTitleInput').value) || '').trim();
+  const replyThreadId = String(($('replyTopicSelect') && $('replyTopicSelect').value) || '').trim();
+  const drawingData = composeMode === 'hand' ? getHandwriteDataUrl() : '';
+  const hasUserTypedContent = !!(text && userTypedSinceComposeClear);
+  const hasUserDrawnContent = !!(drawingData && userDrewSinceComposeClear);
+  if (kind === 'topic' && !topicTitle) { setToast('Add a topic title first.'); return; }
+  if (kind === 'reply' && !replyThreadId) { setToast('Choose a topic to reply to.'); return; }
+  if (!hasUserTypedContent && !hasUserDrawnContent) { setToast('Add your own text or drawing before posting.'); return; }
+  if (text.length > 2000) { setToast('Message is too long.'); return; }
+  try {
+    btn.disabled = true;
+    updateStatusDot('Database reconnecting');
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    const payload = {
+      message_text: text || (drawingData ? '[Handwritten note]' : ''),
+      expires_at: expiresAt
+    };
+    if (currentUser && currentUser.id) payload.author_user_id = currentUser.id;
+    if (kind === 'topic') {
+      payload.thread_title = topicTitle;
+    } else if (kind === 'reply') {
+      payload.parent_post_id = replyThreadId;
+      payload.thread_root_id = replyThreadId;
+    }
+    if (drawingData) {
+      payload.message_drawing = drawingData;
+      payload.message_drawing_theme = getBoardTheme();
+    }
+    const { data: insertedRows, error } = await sb.from(MESSAGE_TABLE).insert(payload).select('id,created_at').limit(1);
+    if (error) throw error;
+    if (kind === 'topic' && insertedRows && insertedRows[0] && insertedRows[0].id) {
+      try {
+        await sb.from(MESSAGE_TABLE).update({ thread_root_id: insertedRows[0].id }).eq('id', insertedRows[0].id);
+      } catch (e) {}
+    }
+    textarea.value = '';
+    userTypedSinceComposeClear = false;
+    userDrewSinceComposeClear = false;
+    if ($('topicTitleInput')) $('topicTitleInput').value = '';
+    clearHandwritePad();
+    updateCharCount();
+    if (insertedRows && insertedRows[0] && insertedRows[0].created_at) {
+      markMessageBoardSeen(insertedRows[0].created_at);
+    } else {
+      markMessageBoardSeen();
+    }
+    setToast('Posted anonymously.');
+    await loadMessages();
+  } catch (err) {
+    const msg = String(err && (err.message || err || '')).toLowerCase();
+    if (/thread_|parent_post_id|author_user_id|message_drawing_theme|schema cache/i.test(msg)) {
+      try {
+        const fallbackPayload = {
+          message_text: text || '[Handwritten note]',
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          message_drawing: drawingData
+        };
+        const retry = await sb.from(MESSAGE_TABLE).insert(fallbackPayload);
+        if (retry && retry.error) throw retry.error;
+        textarea.value = '';
+        userTypedSinceComposeClear = false;
+        userDrewSinceComposeClear = false;
+        if ($('topicTitleInput')) $('topicTitleInput').value = '';
+        clearHandwritePad();
+        updateCharCount();
+        setToast('Posted anonymously.');
+        await loadMessages();
+        return;
+      } catch (retryErr) {
+        setToast('Run the Message Board SQL update to enable threads and self-delete.');
+        return;
+      }
+    }
+    if (drawingData && /message_drawing/i.test(msg)) {
+      setToast('Run the Message Board SQL update to enable handwriting posts.');
+      return;
+    }
+    setToast('Could not post message.');
+    updateStatusDot('Database fault');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function updateCharCount(){
+  const v = $('messageInput') ? $('messageInput').value.length : 0;
+  if ($('charCount')) $('charCount').textContent = String(v);
+}
+
+function setComposeMode(mode){
+  composeMode = mode === 'hand' ? 'hand' : 'type';
+  const isHand = composeMode === 'hand';
+  $('modeTypeBtn').classList.toggle('active', !isHand);
+  $('modeHandBtn').classList.toggle('active', isHand);
+  $('handwriteWrap').classList.toggle('hidden', !isHand);
+  if ($('postBtn')) $('postBtn').classList.toggle('hidden', !isHand);
+  $('typeMeta').classList.toggle('hidden', isHand);
+  $('handMeta').classList.toggle('hidden', !isHand);
+  if (isHand) {
+    initHandwritePad();
+    stopHandAutoDoodle(false);
+    clearHandwritePad();
+  } else {
+    stopHandAutoDoodle(false);
+  }
+}
+
+function initHandwritePad(){
+  handCanvas = $('handwritePad');
+  if (!handCanvas || handCanvas.dataset.ready === '1') return;
+  handCanvas.dataset.ready = '1';
+  resizeHandwritePad();
+  const start = function(e){
+    if (!handCtx) return;
+    handUserInteracted = true;
+    stopHandAutoDoodle(!!handAutoDoodleActive);
+    handDrawing = true;
+    const p = getPadPoint(e);
+    handCtx.beginPath();
+    handCtx.moveTo(p.x, p.y);
+    e.preventDefault();
+  };
+  const move = function(e){
+    if (!handDrawing || !handCtx) return;
+    const p = getPadPoint(e);
+    handCtx.lineTo(p.x, p.y);
+    handCtx.stroke();
+    handDirty = true;
+    userDrewSinceComposeClear = true;
+    e.preventDefault();
+  };
+  const end = function(e){
+    handDrawing = false;
+    if (e) e.preventDefault();
+  };
+  handCanvas.addEventListener('pointerdown', start);
+  handCanvas.addEventListener('pointermove', move);
+  handCanvas.addEventListener('pointerup', end);
+  handCanvas.addEventListener('pointerleave', end);
+  handCanvas.addEventListener('pointercancel', end);
+  window.addEventListener('resize', resizeHandwritePad);
+}
+
+function resizeHandwritePad(){
+  handCanvas = $('handwritePad');
+  if (!handCanvas) return;
+  const ratio = Math.max(1, window.devicePixelRatio || 1);
+  const rect = handCanvas.getBoundingClientRect();
+  const w = Math.max(280, Math.floor(rect.width || handCanvas.clientWidth || 300));
+  const h = Math.max(180, Math.floor(rect.height || 180));
+  const existing = handDirty ? handCanvas.toDataURL('image/png') : '';
+  handCanvas.width = Math.floor(w * ratio);
+  handCanvas.height = Math.floor(h * ratio);
+  handCtx = handCanvas.getContext('2d');
+  handCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  handCtx.lineCap = 'round';
+  handCtx.lineJoin = 'round';
+  handCtx.lineWidth = 2.4;
+  const isLight = document.body.classList.contains('light-mode');
+  handCtx.strokeStyle = isLight ? '#0d1526' : '#ffffff';
+  handCtx.fillStyle = isLight ? '#ffffff' : '#000000';
+  handCtx.fillRect(0, 0, w, h);
+  if (existing) {
+    const img = new Image();
+    img.onload = function(){ handCtx.drawImage(img, 0, 0, w, h); };
+    img.src = existing;
+  }
+}
+
+function getPadPoint(e){
+  const rect = handCanvas.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+}
+
+function clearHandwritePad(){
+  handDirty = false;
+  userDrewSinceComposeClear = false;
+  if (!handCanvas || !handCtx) return;
+  const rect = handCanvas.getBoundingClientRect();
+  const w = Math.max(280, Math.floor(rect.width || handCanvas.clientWidth || 300));
+  const h = Math.max(180, Math.floor(rect.height || 180));
+  const isLight = document.body.classList.contains('light-mode');
+  handCtx.fillStyle = isLight ? '#ffffff' : '#000000';
+  handCtx.fillRect(0, 0, w, h);
+}
+
+function getHandwriteDataUrl(){
+  if (!handCanvas || !handDirty) return '';
+  return handCanvas.toDataURL('image/jpeg', 0.82);
+}
+
+async function resolveAccess(user){
+  try {
+    try {
+      const accessState = await suiteShared.access.loadPwAppAccessState(sb, user, {
+        accessField: 'message_board_access',
+        profileSelect: 'id,full_name,email,approved,disabled,role,message_board_access'
+      });
+      currentProfile = accessState.profile || null;
+      return !!accessState.allowed;
+    } catch (inner) {
+      const msg = String(inner && (inner.message || inner.details || inner.hint || inner.code || '')).toLowerCase();
+      if (msg.indexOf('message_board_access') >= 0 && msg.indexOf('column') >= 0) {
+        const accessStateFallback = await suiteShared.access.loadPwAppAccessState(sb, user, {
+          accessField: '',
+          profileSelect: 'id,full_name,email,approved,disabled,role'
+        });
+        currentProfile = accessStateFallback.profile || null;
+        return !!accessStateFallback.allowed;
+      }
+      throw inner;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+async function doLogin(){
+  const email = ($('loginEmail').value || '').trim().toLowerCase();
+  const pass = $('loginPass').value || '';
+  if (!email || !pass) { setToast('Enter email and password.'); return; }
+  const { error } = await sb.auth.signInWithPassword({ email: email, password: pass });
+  if (error) { setToast('Sign-in failed.'); return; }
+  await bootstrap();
+}
+
+async function doLogout(){
+  if (refreshTimer) clearInterval(refreshTimer);
+  stopPrivateCountdownTicker();
+  await sb.auth.signOut();
+  currentUser = null;
+  currentProfile = null;
+  privateProfiles = [];
+  privateThreads = [];
+  privateMessages = [];
+  privateReadByThread = {};
+  privateCurrentThreadId = '';
+  privateMessagingWarned = false;
+  privateMessagingReady = true;
+  if ($('userChip')) $('userChip').textContent = '—';
+  window.location.href = '../index.html';
+}
+
+async function bootstrap(){
+  if (ACCESS_DENIED_LAUNCH) {
+    document.body.classList.remove('hidden');
+    $('loginScreen').classList.add('hidden');
+    $('appShell').classList.add('hidden');
+    $('accessDenied').classList.remove('hidden');
+    updateStatusDot('Database connected');
+    return;
+  }
+  updateStatusDot('Database reconnecting');
+  const { data } = await sb.auth.getSession();
+  currentUser = data && data.session && data.session.user ? data.session.user : null;
+  if (!currentUser) {
+    document.body.classList.remove('hidden');
+    $('loginScreen').classList.remove('hidden');
+    $('appShell').classList.add('hidden');
+    $('accessDenied').classList.add('hidden');
+    updateStatusDot('Database connected');
+    return;
+  }
+
+  const allowed = await resolveAccess(currentUser);
+  if (!allowed) {
+    document.body.classList.remove('hidden');
+    $('loginScreen').classList.add('hidden');
+    $('appShell').classList.add('hidden');
+    $('accessDenied').classList.remove('hidden');
+    updateStatusDot('Database connected');
+    return;
+  }
+
+  const localPalette = getStoredPalettePreset();
+  const palette = await loadSharedPalettePreference();
+  const shouldApplySharedPalette = !!palette && (palette !== 'default' || localPalette === 'default');
+  if (shouldApplySharedPalette) localStorage.setItem(PALETTE_STORAGE_KEY, palette);
+  applyStoredPalette();
+  const theme = await loadSharedThemePreference();
+  const pref = theme || (suiteShared && suiteShared.storage ? suiteShared.storage.getThemePref() : null);
+  setTheme(pref === 'light');
+  await syncUserChip();
+
+  document.body.classList.remove('hidden');
+  $('loginScreen').classList.add('hidden');
+  $('accessDenied').classList.add('hidden');
+  $('appShell').classList.remove('hidden');
+  updateCharCount();
+  await loadMessages();
+  await loadPrivateMessaging({ forcePanelLoad: false, markRead: false });
+  startPrivateCountdownTicker();
+  markMessageBoardSeen();
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(async function(){
+    await loadMessages();
+    await loadPrivateMessaging({ forcePanelLoad: !$('privatePanel').classList.contains('hidden'), markRead: false });
+  }, 20000);
+}
+
+window.addEventListener('storage', function(e){
+  if (e.key === PALETTE_STORAGE_KEY) applyStoredPalette();
+});
+  document.addEventListener('DOMContentLoaded', async function(){
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  await applySuiteLogos();
+  const input = $('messageInput');
+  if (input){
+    input.placeholder = ANON_MESSAGE_PLACEHOLDER_DEFAULT;
+    input.addEventListener('input', function(){
+      userTypedSinceComposeClear = !!String(input.value || '').trim();
+      updateCharCount();
+    });
+  }
+  onPostKindChange();
+  setComposeMode('type');
+  const privatePanel = $('privatePanel');
+  const privateBtn = $('privateToggleBtn');
+  if (privatePanel && privateBtn) {
+    privatePanel.addEventListener('toggle', function(){
+      if (!privatePanel.open) {
+        privatePanel.classList.add('hidden');
+        privateBtn.classList.remove('active');
+      } else if (!privatePanel.classList.contains('hidden')) {
+        privateBtn.classList.add('active');
+      }
+    });
+  }
+  await bootstrap();
+});
+</script>
+</body>
+</html>
